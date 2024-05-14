@@ -18,7 +18,7 @@ contract CarbToken is ERC20 {
     }
 
     // minting process with simple logic of amount will be minted and send to address
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint256 amount) public { // onlyOwner { <- commented out to allow minting by anyone for the sake of the simplicity of the example
         _mint(to, amount);
     }
 }
