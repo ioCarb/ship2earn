@@ -1,12 +1,15 @@
 # Blockchain Part of the ship2earn project - Hardhat Project
 
 ## PebbleRegistration.sol
-- basic functionalities created while learning and playing around with SCs 
-- to be reviewed and updated
+- registration of a Pebble to a vehicle
+- AccessControl to allow only admins (us) to register vehicles and devices
+
+## Pebble Binding
+- binding of a Pebble to a wallet address
+- only allowed by official Pebbles
 
 ## CarbToken.sol
-- during deployment sender address is recorded as admin (others can be added already as well)
-- admins have access to addMinter func which allows them to add minters
-    - verifier.sol contract address can be added as minter
+
+## Verifier.sol
 
 ## .sol
