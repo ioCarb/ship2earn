@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require('dotenv').config();
 
 // npx tasks 
 
@@ -25,7 +26,7 @@ module.exports = {
       url: `http://127.0.0.1:15014`,
 
       // Input your Metamask testnet account private key here
-      accounts: [`852a59f98b328f7ccbd195212dfadf53cabe80701639dcfd3d9efcf30b2a3fc4`],
+      accounts: [process.env.PRIVATE_KEY_ADMIN],
     },
   },
 };

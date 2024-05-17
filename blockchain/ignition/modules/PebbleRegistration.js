@@ -1,6 +1,7 @@
+require('dotenv').config();
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-const admin = "0xbe70c6f915433ed968fa7a1e63d5bc98a186e562";
+const admin = process.env.ADDRESS_ADMIN;
 
 const PebbleRegistrationModule = buildModule("PebbleRegistrationModule", (m) => {
     const adminAddress = m.getParameter("admin", admin);

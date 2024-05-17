@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.24;
 
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 // import "hardhat/console.sol";
 
-contract PebbleRegistration {
+contract PebbleRegistration is AccessControl {
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     uint256 public pebblesCount = 0;
 
     struct Pebble {
@@ -15,18 +16,9 @@ contract PebbleRegistration {
     // Mapping from device ID to Device struct
     mapping(string => Pebble) public pebbles;
 
-    // Address of the developer or admin
-    address public admin;
-
     // Constructor to set the admin address
-    constructor(address _admin) {
-        admin = _admin;
-    }
-
-    // Modifier to restrict access to admin
-    modifier onlyAdmin() {
-        require(msg.sender == admin, "Not authorized");
-        _;
+    constructor(address admin) {
+        _grantRole(ADMIN_ROLE, admin);
     }
 
     modifier onlyUnregisteredPebble(string calldata pebbleId) {
@@ -52,21 +44,17 @@ contract PebbleRegistration {
     }
 
     // Function to register a device to a vehicle
-    function registerDevice(
-        string calldata pebbleId,
-        string calldata vehicleId
-    ) public onlyAdmin {
+    function registerPebble(string calldata pebbleId, string calldata vehicleId) 
+        public onlyRole(ADMIN_ROLE) {
         // If the pebble is already registered, return and emit event -> false means already registered
         if (pebbles[pebbleId].isRegistered) {
-            // console.log("Data Source already registered");
             emit PebbleRegistered(pebbleId, vehicleId, false);
             return;
         }
 
         pebbles[pebbleId] = Pebble({vehicleId: vehicleId, isRegistered: true});
-
         pebblesCount++;
-
         emit PebbleRegistered(pebbleId, vehicleId, true);
     }
+    // Function  
 }
