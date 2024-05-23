@@ -2,15 +2,16 @@
 pragma solidity ^0.8.24;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-
-// Contract to bind a Pebble to a wallet address 
-/*
-- binding process in the hand of the user -> verification of signature necessary
-    - pebble has a signature object with an r and an s value of an ECDSA signature
-- How to verify? Pebble tracker open oracle? MachineFi Portal? 
-- already done with Pebble setup to MachineFi Portal
-- currently, the binding is done by the admin, open to do
-*/
+/**
+ * @title PebbleBinding
+ * @dev Contract to bind a Pebble to a wallet address (company)
+ * TO DO: binding process in the hand of the user -> verification of signature necessary
+ *     -> pebble has a signature object with an r and an s value of an ECDSA signature
+ * - How to verify? Pebble tracker open oracle? MachineFi Portal? 
+ * - already done with Pebble setup to MachineFi Portal
+ * - currently, the binding is done by the admin, open to do
+ * To DO: get function for w3bstream node to call to update DB
+ */
 
 contract PebbleBinding is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");

@@ -3,9 +3,14 @@ pragma solidity ^0.8.24;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
+/**
+ * @title PebbleRegistration
+ * @dev Contract to register a Pebble to a vehicle
+ * TO DO: add set functions for vehicles
+ * TO DO: add get functions for vehicles
+ */
 
-
-contract PebbleRegistration is AccessControl {
+contract PebbleRegistration is AccessControl { 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     uint256 public pebblesCount = 0;
 
