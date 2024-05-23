@@ -2,7 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-// import "hardhat/console.sol";
+
+
 
 contract PebbleRegistration is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -10,15 +11,23 @@ contract PebbleRegistration is AccessControl {
 
     struct Pebble {
         string vehicleId; // ID of the associated vehicle: bike, scooter, car, airplane
-        bool isRegistered;
+        bool isRegistered; 
     }
 
     // Mapping from device ID to Device struct
     mapping(string => Pebble) public pebbles;
 
+    struct Vehicle {
+        string vehicleId;
+        string vehicleType;
+        uint256 avgEmissions;
+    }
+
+    mapping(string => Vehicle) public vehicles;
+
     // Constructor to set the admin address
-    constructor(address admin) {
-        _grantRole(ADMIN_ROLE, admin);
+    constructor() {
+        _grantRole(ADMIN_ROLE, msg.sender);
     }
 
     modifier onlyUnregisteredPebble(string calldata pebbleId) {
@@ -56,5 +65,9 @@ contract PebbleRegistration is AccessControl {
         pebblesCount++;
         emit PebbleRegistered(pebbleId, vehicleId, true);
     }
-    // Function  
+    // Function to add a vehicle type
+    function addVehicle(string calldata vehicleId, string calldata vehicleType, uint256 avgEmissions) 
+        public onlyRole(ADMIN_ROLE) {
+        vehicles[vehicleId] = Vehicle({vehicleId: vehicleId, vehicleType: vehicleType, avgEmissions: avgEmissions});
+    }
 }
