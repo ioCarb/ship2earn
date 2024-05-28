@@ -10,9 +10,11 @@ interface IMintingContract {
 /**
  * @title RankingContract
  * @dev Contract to rank companies based on their normalized GHG emissions
- * TO DO: Check the Ranking Algorithm if best is first or last
- * TO DO: Update set function for totalCompanies (who and when?) potentially during Registration or Binding
- * TO DO: calculateRanking() should be called by ioCarb after all companies have reported their data
+ * 2nd it. TO DO: Update set function for totalCompanies (who and when?) potentially during Registration or Binding
+ * 2nd it. TO DO: Add a role for ioCarb besides ADMIN_ROLE for operational tasks
+ * Done: Check the Ranking Algorithm if best is first or last -> index 0 is best, implementation correct
+ * Done: calculateRanking() should be called by ioCarb after all companies have reported their data
+ * public address, signed 
  */
 
 contract RankingContract is AccessControl {
@@ -61,9 +63,9 @@ contract RankingContract is AccessControl {
                 totalDistanceCompany: totalDistanceCompany
             });
             // add company immediately to correct ranking position so no sorting is needed later
-            uint index = 0;
+            uint index;
             for (index = 0; index < companyAddresses.length; index++) {
-                if (companies[companyAddresses[index]].normalizedGR < normalizedGR) {
+                if (companies[companyAddresses[index]].normalizedGR < normalizedGR) { // newest addition has higher nGR (better ranking)
                     break; // found the correct position
                 }
             }
@@ -76,10 +78,10 @@ contract RankingContract is AccessControl {
             companiesCount++;
             if (companiesCount == totalCompanies) { // all companies have reported their data
                 calculateRanking(); // potentially change to emit an event and let ioCarb call the function so last reporting entity is not punished with gas fees
-            }   
+            }
         }
     
-    function calculateRanking() private {
+    function calculateRanking() public onlyRole(ADMIN_ROLE) { // potentially new role for ioCarb to call this function
         uint totalCO2 = 0;  
         uint totalDistance = 0;
         // uint totalNormalizedGR = 0;  // not used in the current implementation as cutoff is handled using CO2 emissions

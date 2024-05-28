@@ -6,8 +6,8 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title PebbleRegistration
  * @dev Contract to register a Pebble to a vehicle
- * TO DO: add set functions for vehicles
- * TO DO: add get functions for vehicles
+ * Done: add set functions for vehicles -> addVehicle
+ * TO DO: add get functions for vehicles -> getVehicles
  */
 
 contract PebbleRegistration is AccessControl { 
@@ -65,7 +65,6 @@ contract PebbleRegistration is AccessControl {
             emit PebbleRegistered(pebbleId, vehicleId, false);
             return;
         }
-
         pebbles[pebbleId] = Pebble({vehicleId: vehicleId, isRegistered: true});
         pebblesCount++;
         emit PebbleRegistered(pebbleId, vehicleId, true);
@@ -75,4 +74,6 @@ contract PebbleRegistration is AccessControl {
         public onlyRole(ADMIN_ROLE) {
         vehicles[vehicleId] = Vehicle({vehicleId: vehicleId, vehicleType: vehicleType, avgEmissions: avgEmissions});
     }
+
+    // Function to get all vehicles for a given pebbleID
 }

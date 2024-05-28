@@ -5,12 +5,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title PebbleBinding
  * @dev Contract to bind a Pebble to a wallet address (company)
- * TO DO: binding process in the hand of the user -> verification of signature necessary
- *     -> pebble has a signature object with an r and an s value of an ECDSA signature
- * - How to verify? Pebble tracker open oracle? MachineFi Portal? 
- * - already done with Pebble setup to MachineFi Portal
- * - currently, the binding is done by the admin, open to do
- * To DO: get function for w3bstream node to call to update DB
+ * Done: get function for w3bstream node to call to update DB -> getPebbles
  */
 
 contract PebbleBinding is AccessControl {
@@ -23,6 +18,7 @@ contract PebbleBinding is AccessControl {
 
     // Mapping from device ID to Device struct
     mapping(string => Binding) public bindings;
+    string[] public Binding_bindings;
 
     // Constructor to set the admin address
     constructor() {
@@ -41,16 +37,28 @@ contract PebbleBinding is AccessControl {
     event PebbleBound(string pebbleId, address wallet, bool isBound);
 
     // Function to get the wallet address for a given pebble ID
-    function getWallet(
-        string calldata _pebbleId
-    ) public view returns (address) {
+    function getWallet(string calldata _pebbleId) public view returns (address) {
         return bindings[_pebbleId].wallet;
+    }
+
+    // Function to get the pebbleIDs for a given wallet address
+    function getPebbles(address _wallet) public view returns (string[] memory) {
+        string[] memory pebbleIds = new string[](Binding_bindings.length);
+        for (uint i = 0; i < Binding_bindings.length; i++) {
+            if (bindings[Binding_bindings[i]].wallet == _wallet) {
+                pebbleIds[i] = Binding_bindings[i];
+            } else {
+                pebbleIds[i] = "";
+            }
+        }
+        return pebbleIds;
     }
 
     // Function to bind a pebble to a wallet
     function bindPebble(string calldata pebbleId, address wallet) 
         public onlyRole(ADMIN_ROLE) onlyUnboundPebble(pebbleId) {
         bindings[pebbleId] = Binding({wallet: wallet, isBound: true});
+        Binding_bindings.push(pebbleId);
         emit PebbleBound(pebbleId, wallet, true);
     }
 
