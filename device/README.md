@@ -5,7 +5,7 @@ This Bash script gerate a HTTP request to the W3bstream Node
 ## Prerequisites
 
 - `httpie` command-line tool
-- Running W3ebstram node
+- Running W3ebstram node (as in the docs [README.md](https://github.com/machinefi/w3bstream/tree/main?tab=readme-ov-file#run-w3bstream-with-prebuilt-docker-images))
 
 
 ## Usage
@@ -22,7 +22,7 @@ TOPIC=<topic of the project>
    export EVENTTYPE=<type of the event defined in the w3bstream node>
    export TIMESTAMP=$(date +%s)  # Event pub timestamp 
 ```
-as shown in the example below
+as shown in the example below (replace ``<HOSTNAME>`` by localhost if you're running a local w3bstream node)
    ```bash
    export TOPIC="eth_0xa2490c896ac250bf5604aff008a9cebca705de20_ship2earn"
    export PUBTOK="w3b_MV8xNzE2MzIwMjE3X2M1bHNTWSYkOG9CaQ"
