@@ -6,7 +6,9 @@ edition = "2021"
 # for wasm
 [profile.release]
 lto = true
-#opt-level = 's' # for further bin size optimizations
+opt-level = 'z' # for further bin size optimizations
+codegen-units = 1
+strip = true
 
 [build]
 target = "wasm32-wasi"
@@ -17,20 +19,17 @@ path = "src/lib.rs"
 
 [dependencies]
 #zokrates_core = { path = "./../ZoKrates/zokrates_core/" }
-zokrates_core = { git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_core", default-features = false }
+zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_core", default-features = false }
 #zokrates_ast = { path = "./../ZoKrates/zokrates_ast/", default-features = false }
-zokrates_ast = { git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_ast", default-features = false }
-zokrates_common = { git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_common", default-features = false }
-#zokrates_cli = { git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_cli" }
+zokrates_ast = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_ast", default-features = false }
+zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_common", default-features = false }
 #zokrates_field = { version = "0.5", path = "./../ZoKrates/zokrates_field", default-features = false }
 zokrates_field = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_field", default-features = false }
 zokrates_interpreter = { git = "https://github.com/Zokrates/ZoKrates.git", workspace="zokrates_interpreter", default-features = false }
-zokrates_fs_resolver = { git = "https://github.com/Zokrates/ZoKrates.git", subdir="zokrates_fs_resolver" }
-zokrates_circom = { git = "https://github.com/Zokrates/ZoKrates.git", subdir="zokrates_circom" }
+zokrates_fs_resolver = { git = "https://github.com/Zokrates/ZoKrates.git", workspace="zokrates_fs_resolver" }
+zokrates_circom = { git = "https://github.com/Zokrates/ZoKrates.git", workspace="zokrates_circom" }
 #zokrates_abi = { path = "./../ZoKrates/zokrates_abi" }
 
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 hex = "0.4.3"
 ethabi ={ version =  "17.2.0", default-features = false, features = ["full-serde"] }
 sha2 = "0.10.6"

@@ -4,6 +4,7 @@ TARGET = wasm32-wasi
 .PHONY: setup
 setup:
 	rustup target add wasm32-wasi
+# TODO: performat zokrates setup
 
 local:
 	@CC=$(CC);\
