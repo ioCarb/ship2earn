@@ -13,7 +13,9 @@ local:
 test: local
 	@RUST_BACKTRACE=1;\
 	cargo test test --lib -- --nocapture
-
+check:
+	@CC=$(CC);\
+	cargo check --release --target=$(TARGET)
 wasm:
 	@CC=$(CC);\
 	cargo build --release --target=$(TARGET)

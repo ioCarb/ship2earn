@@ -22,10 +22,11 @@ path = "src/lib.rs"
 zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_core", default-features = false }
 #zokrates_ast = { path = "./../ZoKrates/zokrates_ast/", default-features = false }
 zokrates_ast = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_ast", default-features = false }
-zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_common", default-features = false }
+#zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_common", default-features = false }
 #zokrates_field = { version = "0.5", path = "./../ZoKrates/zokrates_field", default-features = false }
 zokrates_field = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates.git", workspace = "zokrates_field", default-features = false }
-zokrates_interpreter = { git = "https://github.com/Zokrates/ZoKrates.git", workspace="zokrates_interpreter", default-features = false }
+#zokrates_interpreter = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_interpreter",default-features = false }
+zokrates_interpreter = { version="0.1", path = "./../ZoKrates/zokrates_interpreter/", default-features = false }
 zokrates_fs_resolver = { git = "https://github.com/Zokrates/ZoKrates.git", workspace="zokrates_fs_resolver" }
 zokrates_circom = { git = "https://github.com/Zokrates/ZoKrates.git", workspace="zokrates_circom" }
 #zokrates_abi = { path = "./../ZoKrates/zokrates_abi" }

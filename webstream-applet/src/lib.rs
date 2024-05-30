@@ -109,12 +109,11 @@ fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
     let public_inputs = ir_prog.public_inputs();
 
     let witness = interpreter
-        .execute_with_log_stream(
+        .execute(
             &arguments,
             ir_prog.statements,
             &ir_prog.arguments,
             &ir_prog.solvers,
-            &mut std::io::stdout(),
         )
         .map_err(|e| format!("Execution failed: {}", e))?;
 

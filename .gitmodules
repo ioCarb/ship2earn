@@ -1,0 +1,3 @@
+[submodule "ZoKrates"]
+	path = ZoKrates
+	url = https://github.com/Zokrates/ZoKrates
