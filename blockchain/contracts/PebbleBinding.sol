@@ -26,10 +26,7 @@ contract PebbleBinding is AccessControl {
     }
 
     modifier onlyUnboundPebble(string calldata pebbleId) {
-        require(
-            !bindings[pebbleId].isBound,
-            "Pebble already bound"
-        );
+        require(!bindings[pebbleId].isBound, "Pebble already bound");
         _;
     }
 
@@ -37,7 +34,9 @@ contract PebbleBinding is AccessControl {
     event PebbleBound(string pebbleId, address wallet, bool isBound);
 
     // Function to get the wallet address for a given pebble ID
-    function getWallet(string calldata _pebbleId) public view returns (address) {
+    function getWallet(
+        string calldata _pebbleId
+    ) public view returns (address) {
         return bindings[_pebbleId].wallet;
     }
 
@@ -55,15 +54,18 @@ contract PebbleBinding is AccessControl {
     }
 
     // Function to bind a pebble to a wallet
-    function bindPebble(string calldata pebbleId, address wallet) 
-        public onlyRole(ADMIN_ROLE) onlyUnboundPebble(pebbleId) {
+    function bindPebble(
+        string calldata pebbleId,
+        address wallet
+    ) public onlyRole(ADMIN_ROLE) onlyUnboundPebble(pebbleId) {
         bindings[pebbleId] = Binding({wallet: wallet, isBound: true});
         Binding_bindings.push(pebbleId);
         emit PebbleBound(pebbleId, wallet, true);
     }
 
-    function unBindPebble(string calldata pebbleId) 
-        public onlyRole(ADMIN_ROLE) {
+    function unBindPebble(
+        string calldata pebbleId
+    ) public onlyRole(ADMIN_ROLE) {
         bindings[pebbleId] = Binding({wallet: address(0), isBound: false});
         emit PebbleBound(pebbleId, address(0), false);
     }

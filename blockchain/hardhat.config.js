@@ -26,7 +26,10 @@ module.exports = {
       url: `http://127.0.0.1:15014`,
 
       // Input your Metamask testnet account private key here
-      accounts: [process.env.PRIVATE_KEY_ADMIN],
+      accounts: [process.env.PRIVATE_KEY_ADMIN, 
+        process.env.PRIVATE_KEY_COMPANY_A, 
+        process.env.PRIVATE_KEY_COMPANY_B, 
+        process.env.PRIVATE_KEY_COMPANY_C],
     },
   },
 };

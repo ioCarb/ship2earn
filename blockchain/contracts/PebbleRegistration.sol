@@ -10,13 +10,13 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
  * Done: add get functions for vehicles -> getPebble
  */
 
-contract PebbleRegistration is AccessControl { 
+contract PebbleRegistration is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     uint256 public pebblesCount = 0;
 
     struct Pebble {
         string vehicleId; // ID of the associated vehicle: bike, scooter, car, airplane
-        bool isRegistered; 
+        bool isRegistered;
     }
 
     // Mapping from device ID to Device struct
@@ -44,7 +44,11 @@ contract PebbleRegistration is AccessControl {
     }
 
     // Event for device registration
-    event PebbleRegistered(string pebbleId, string vehicleId, bool isRegistered);
+    event PebbleRegistered(
+        string pebbleId,
+        string vehicleId,
+        bool isRegistered
+    );
 
     // Function to get the vehicle ID for a given pebble ID
     function getPebble(
@@ -58,8 +62,10 @@ contract PebbleRegistration is AccessControl {
     }
 
     // Function to register a device to a vehicle
-    function registerPebble(string calldata pebbleId, string calldata vehicleId) 
-        public onlyRole(ADMIN_ROLE) {
+    function registerPebble(
+        string calldata pebbleId,
+        string calldata vehicleId
+    ) public onlyRole(ADMIN_ROLE) {
         // If the pebble is already registered, return and emit event -> false means already registered
         if (pebbles[pebbleId].isRegistered) {
             emit PebbleRegistered(pebbleId, vehicleId, false);
@@ -70,8 +76,15 @@ contract PebbleRegistration is AccessControl {
         emit PebbleRegistered(pebbleId, vehicleId, true);
     }
     // Function to add a vehicle type
-    function addVehicle(string calldata vehicleId, string calldata vehicleType, uint256 avgEmissions) 
-        public onlyRole(ADMIN_ROLE) {
-        vehicles[vehicleId] = Vehicle({vehicleId: vehicleId, vehicleType: vehicleType, avgEmissions: avgEmissions});
+    function addVehicle(
+        string calldata vehicleId,
+        string calldata vehicleType,
+        uint256 avgEmissions
+    ) public onlyRole(ADMIN_ROLE) {
+        vehicles[vehicleId] = Vehicle({
+            vehicleId: vehicleId,
+            vehicleType: vehicleType,
+            avgEmissions: avgEmissions
+        });
     }
 }
