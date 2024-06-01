@@ -4,9 +4,10 @@ use ws_sdk::database::sql::*;
 use ws_sdk::stream::get_data;
 
 
-const REGISTRY_TABLE: &str = "DeviceRegistry";
-const BINDING_TABLE: &str = "DeviceBinding";
-const DATA_TABLE: &str = "DeviceData";
+const REGISTRY_TABLE: &str = "deviceregistry";
+const BINDING_TABLE: &str = "devicebinding";
+const DATA_TABLE: &str = "devicedata";
+const TEST_DATA: &str = "testdata";
 
 
 #[no_mangle]
@@ -16,6 +17,7 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
     // Get the message payload from the resource id
     let payload_str = get_data(rid as u32).unwrap();
     let payload_json: serde_json::Value = serde_json::from_str(std::str::from_utf8(&payload_str).unwrap()).unwrap();
+
     //let topics = message_json["topics"].as_array().unwrap();
     let device_id = payload_json["pebbleId"].as_str().unwrap();
     let vehicle_id = payload_json["vehicleId"].as_str().unwrap();
@@ -23,12 +25,15 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
     log_info(&format!("Device ID: {}", device_id)).unwrap();
     log_info(&format!("Vehicle ID: {}", vehicle_id)).unwrap();
 
-    
+    // Insert the device into the registry table
     let sql = format!(
         "INSERT INTO {} (device_id, vehicle_id, is_registered) VALUES (?,?,?);",
         REGISTRY_TABLE
     );
-    execute(&sql, &[&device_id, &vehicle_id, &true]).unwrap();
+    execute(
+        &sql,
+        &[&device_id, &vehicle_id, &true]
+    ).unwrap();
 
     return 0;
 }
@@ -38,6 +43,7 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
 pub extern "C" fn handle_device_binding(rid: i32) -> i32 {   
      log_info("Binding event detected").unwrap();
 
+    // Get the message payload from the resource id
     let payload_str = get_data(rid as u32).unwrap();
     let payload_json: serde_json::Value = serde_json::from_str(std::str::from_utf8(&payload_str).unwrap()).unwrap();
     
@@ -48,6 +54,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
     log_info(&format!("Device ID: {}", device_id)).unwrap();
     log_info(&format!("Owner wallet: {}", owner_wallet)).unwrap();
     
+    // Check if the device has been bound or unbound
     if binding_status == "true" {
         log_info("New device has been bound to the wallet").unwrap();
 
@@ -58,7 +65,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
         );
         execute(
             &sql,
-            &[&device_id, &owner_wallet, &true],
+            &[&device_id, &owner_wallet, &true]
         ).unwrap();
         return 0;
     } else {
@@ -71,7 +78,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
         );
         execute(
             &sql,
-            &[&device_id],
+            &[&device_id]
         ).unwrap();        
 
         return 0;
@@ -129,7 +136,7 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32{
         );
         execute(
             &sql,
-            &[&device_id, &data, &timestamp],
+            &[&device_id, &data, &timestamp]
         ).unwrap();
     /*} else {
         log_info("Signature verification failed").unwrap();
@@ -158,8 +165,13 @@ pub extern "C" fn handle_registration_call(rid: i32) -> i32 {
     log_info(&format!("Wallet Address: {}", wallet_address)).unwrap();
 
     // Insert into the TestData table
-    let sql = "INSERT INTO \"TestData\" (device_id, vehicle_id, wallet_address) VALUES (?,?,?);";
-    execute(&sql, &[&device_id, &vehicle_id, &wallet_address]).unwrap();
+    let sql = &format!("INSERT INTO {} (device_id, vehicle_id, wallet_address) VALUES (?,?,?);" ,
+    TEST_DATA
+);
+    execute(
+        &sql,
+        &[&device_id, &vehicle_id, &wallet_address]
+        ).unwrap();
 
 
     /*let public_key = get_public_key_for_device(device_id).await.unwrap();
