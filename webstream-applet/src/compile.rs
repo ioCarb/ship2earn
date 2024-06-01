@@ -16,7 +16,6 @@ use ws_sdk::database::kv::{get, set};
 #[cfg(not(debug_assertions))]
 use ws_sdk::log::log_info;
 use zokrates_circom::write_r1cs;
-use zokrates_common::CompileConfig;
 use zokrates_core::compile::CompileError;
 use zokrates_fs_resolver::FileSystemResolver;
 

@@ -1,4 +1,3 @@
-use zokrates_field::Field;
 use anyhow::Result;
 use rust_embed::Embed;
 use std::io::{Cursor, Read, Write};
@@ -8,6 +7,7 @@ use ws_sdk::log::log_error;
 use ws_sdk::log::log_info;
 use zokrates_ast::ir::{self, ProgEnum};
 use zokrates_ast::typed::types::{ConcreteSignature, ConcreteType, GTupleType};
+use zokrates_field::Field;
 
 #[derive(Embed)]
 #[folder = "./inputs/"]
