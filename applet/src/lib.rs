@@ -47,7 +47,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
     let payload_str = get_data(rid as u32).unwrap();
     let payload_json: serde_json::Value = serde_json::from_str(std::str::from_utf8(&payload_str).unwrap()).unwrap();
     
-    let device_id = payload_json["device_id"].as_str().unwrap();
+    let device_id = payload_json["pebbleId"].as_str().unwrap();
     let owner_wallet = payload_json["wallet"].as_str().unwrap();
     let binding_status = payload_json["isBound"].as_str().unwrap();
 
