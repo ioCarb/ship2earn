@@ -53,36 +53,50 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
 
     log_info(&format!("Device ID: {}", device_id)).unwrap();
     log_info(&format!("Owner wallet: {}", owner_wallet)).unwrap();
-    
-    // Check if the device has been bound or unbound
-    if binding_status == "true" {
-        log_info("New device has been bound to the wallet").unwrap();
 
-        // Insert the device into the binding table
-        let sql = format!(
-            "INSERT INTO {} (device_id, owner_wallet, is_bound) VALUES (?,?);",
-            BINDING_TABLE
-        );
-        execute(
-            &sql,
-            &[&device_id, &owner_wallet, &true]
-        ).unwrap();
+    // Check if the device is registered
+    let sql_check_registry = format!(
+        "SELECT device_id FROM {} WHERE device_id = ?;",
+        REGISTRY_TABLE        
+    );
+    let result_registry = query(&sql_check_registry, &[&device_id]).unwrap();
+    
+    // If the device is not registered, cannot bind to wallet
+    if result_registry.is_empty() {
+        log_info(&format!("Device {} must first be registered to be bound to a wallet", device_id)).unwrap();
         return 0;
     } else {
-        log_info("Device has been unbound").unwrap();
+        // Check if the device has been bound or unbound
+        if binding_status == "true" {
+            log_info("New device has been bound to the wallet").unwrap();
 
-        // Delete the device from the binding table
-        let sql = format!(
-            "DELETE FROM {} WHERE device_id = ?;",
-            BINDING_TABLE
-        );
-        execute(
-            &sql,
-            &[&device_id]
-        ).unwrap();        
+            // Insert the device into the binding table
+            let sql = format!(
+                "INSERT INTO {} (device_id, owner_wallet, is_bound) VALUES (?,?,?);",
+                BINDING_TABLE
+            );
+            execute(
+                &sql,
+                &[&device_id, &owner_wallet, &true]
+            ).unwrap();
+            return 0;
+        } else {
+            log_info("Device has been unbound").unwrap();
 
-        return 0;
+            // Delete the device from the binding table
+            let sql = format!(
+                "DELETE FROM {} WHERE device_id = ?;",
+                BINDING_TABLE
+            );
+            execute(
+                &sql,
+                &[&device_id]
+            ).unwrap();        
+
+            return 0;
+        }        
     }
+    
 }
 
 
@@ -102,7 +116,7 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32{
     log_info(&format!("Data: {}", data)).unwrap();
     log_info(&format!("Timestamp: {}", timestamp)).unwrap();
 
-     // Check if the device is registered
+    // Check if the device is registered
     let sql_check_registry = format!(
         "SELECT device_id FROM {} WHERE device_id = ?;",
         REGISTRY_TABLE        
