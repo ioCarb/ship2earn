@@ -36,7 +36,7 @@ contract RankingContract is AccessControl {
     uint256 public totalCompanies; // total number of companies that should report their data
     uint256 public avgCO2PerKm; // average CO2 emissions per km, calculated from all companies in calculateRanking()
 
-    address public mintingContract;
+    IMintingContract private mintingContract;
 
     constructor() {
         _grantRole(ADMIN_ROLE, msg.sender);
@@ -54,6 +54,10 @@ contract RankingContract is AccessControl {
     event companyDataReceived(
         address company,
         bool lastCompany
+    );
+
+    event mintingContractSet(
+        address mintingContract
     );
 
     function setTotalCompanies(
@@ -74,7 +78,8 @@ contract RankingContract is AccessControl {
     function setMintingContract(
         address _mintingContract
     ) public onlyRole(ADMIN_ROLE) {
-        mintingContract = _mintingContract;
+        mintingContract = IMintingContract(_mintingContract);
+        emit mintingContractSet(_mintingContract);
     }
 
     // called by Verifier Contract if proof is valid
@@ -87,7 +92,6 @@ contract RankingContract is AccessControl {
             totalCO2Company: totalCO2Company,
             totalDistanceCompany: totalDistanceCompany
         });
-        // add company immediately to correct ranking position so no sorting is needed later
         companyAddresses.push(company);
         companiesCount++;
         if (companiesCount == totalCompanies) {
@@ -127,7 +131,7 @@ contract RankingContract is AccessControl {
                 savings = expectedCO2 - companyCO2;
                 savings = Math.mulDiv(savings, 1, 1e18);
                 emit savingsCalculated(companyAddresses[i], savings);
-                // IMintingContract(mintingContract).mint(companyAddresses[i], savings); // mint tokens corresponding to CO2 savings
+                mintingContract.mint(companyAddresses[i], savings); // mint tokens corresponding to CO2 savings
             }
         }
     }
