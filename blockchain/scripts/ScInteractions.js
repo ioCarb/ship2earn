@@ -63,12 +63,13 @@ async function Ranking(contractAddress, signers) {
 async function reportData(contractAddress, signers) {
   const totalCO2Company = [100, 200, 300];
   const totalDistanceCompany = [1000, 1000, 1000];
+  const Contract_listener = await ethers.getContractAt("RankingContract", contractAddress, signers[0]);
+  Contract_listener.on("companyDataReceived", (address, lastCompany) => {
+    console.log(`Company ${address} data received. Last company? ${lastCompany}.`);
+  });
   for (let i = 0; i < 3; i++) {
     signer = signers[i+1]
     const Contract = await ethers.getContractAt("RankingContract", contractAddress, signer);
-    Contract.on("companyDataReceived", (address, lastCompany) => {
-      console.log(`Company ${address} data received. Last company? ${lastCompany}.`);
-    });
     const tx = await Contract.receiveData(signer.address, totalCO2Company[i], totalDistanceCompany[i], {gasLimit: 3000000});
     await tx.wait();
   }
