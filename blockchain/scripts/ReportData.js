@@ -1,24 +1,44 @@
 require('dotenv').config();
 
-async function reportData(contractAddress, signers) {
-    const totalCO2Company = [100, 200, 300];
-    const totalDistanceCompany = [1000, 1000, 1000];
-    const Contract_listener = await ethers.getContractAt("RankingContract", contractAddress, signers[0]);
-    Contract_listener.on("companyDataReceived", (address, lastCompany) => {
-      console.log(`Company ${address} data received. Last company? ${lastCompany}.`);
+async function reportData(VerifierContractAddress, signers) {
+  const proof = {
+    a: [
+      "0x1f42b37359a742ee55310f678a19af3c445be9566aad4d1dc4e654392c9f969c",
+      "0x04fef5222174d1f8e86015027fe955ebf25aeaf912f943e9a4647a62980d3bcc"
+    ],
+    b: [
+      [
+        "0x156d3d7d5a4872d675dc44cbcbc129bc9d56f4ec89c4ecad5b821749b0e3023d",
+        "0x21308799bf0aebd63bb3353cd6e04efd474d002684ddb02ad93caa47273eae6a"
+      ],
+      [
+        "0x2542067c9c5280b96a8d04925d48a46d5ae84422e7efa1b4e216e6fd86c76ac6",
+        "0x05d4b12818b8a380e245ded8a6a7cfe0bc76d3e22df58bdf30deba7166c4b4f7"
+      ]
+    ],
+    c: [
+      "0x2a92589705a9f33452ddf5d89749555cc46f19bf6966bd7d90fa6550a2561637",
+      "0x1721a589ba81b992e2c029fc820a0337469285f6d2f129a10402b2c9da072ece"
+    ]
+  };
+  const input = ["0x20efac506a3d21dc3882103a7a727ad821f2422988783ee8b2f1762ecd0dbb03","0x24da398ed1996eae6dafb3a687806e3a49c3add6949774d6017b30a66b2503ce","0x000000000000000000000000000000000000000000000000000000001f90b574","0x000000000000000000000000000000000000000000000000000000001f90b574","0x000000000000000000000000000000000000000000000000000000001f90b574","0x000000000000000000000000000000000000000000000000000000001f90b574","0x000000000000000000000000000000000000000000000000000000000eba150f","0x000000000000000000000000000000000000000000000000000000000eba150f","0x000000000000000000000000000000000000000000000000000000000eba150f","0x000000000000000000000000000000000000000000000000000000000eba150f","0x0000000000000000000000000000000000000000000000000000000033cdbb15","0x0000000000000000000000000000000000000000000000000000000033cdbb15","0x0000000000000000000000000000000000000000000000000000000033cdbb15","0x0000000000000000000000000000000000000000000000000000000033cdbb15","0x0000000000000000000000000000000000000000000000000000000080b23fa0","0x0000000000000000000000000000000000000000000000000000000080b23fa0","0x0000000000000000000000000000000000000000000000000000000080b23fa0","0x000000000000000000000000000000000000000000000000000000003b9aca01","0x0000000000000000000000000000000000000000000000000000000086353032","0x0000000000000000000000000000000000000000000000000000000086353032"]
+    const Contract_listener = await ethers.getContractAt("RankingContract", process.env.RANKING_CONTRACT_ADDRESS, signers[0]);
+    Contract_listener.on("companyDataReceived", (address, lastCompany, CO2, distance) => {
+      console.log(`Company ${address} emitted ${CO2} on ${distance}km. Last company? ${lastCompany}.`);
     });
-    for (let i = 0; i < process.env.NUMBER_OF_COMPANIES; i++) {
-      signer = signers[i+1]
-      const Contract = await ethers.getContractAt("RankingContract", contractAddress, signer);
-      const tx = await Contract.receiveData(signer.address, totalCO2Company[i], totalDistanceCompany[i], {gasLimit: 3000000});
-      await tx.wait();
-    }
+    const VerifierListener = await ethers.getContractAt("Verifier", VerifierContractAddress, signers[0]);
+    VerifierListener.on("Verified", (success) => {
+      console.log(`Transaction successfull: ${success}.`);
+    });
+    const Contract = await ethers.getContractAt("Verifier", VerifierContractAddress, signers[1]);
+    const tx = await Contract.verifyTx(proof, input, {gasLimit: 3000000});
+    await tx.wait();
 }
 
 async function main() {
-    const RankingContractAddress = process.env.RANKING_CONTRACT_ADDRESS;
+    const VerifierContractAddress = process.env.VERIFIER_CONTRACT_ADDRESS;
     const signers = await ethers.getSigners();
-    await reportData(RankingContractAddress, signers);
+    await reportData(VerifierContractAddress, signers);
     }
     
 // Run the script

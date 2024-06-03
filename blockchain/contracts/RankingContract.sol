@@ -53,7 +53,9 @@ contract RankingContract is AccessControl {
 
     event companyDataReceived(
         address company,
-        bool lastCompany
+        bool lastCompany,
+        uint256 totalCO2Company,
+        uint256 totalDistanceCompany
     );
 
     event mintingContractSet(
@@ -96,10 +98,10 @@ contract RankingContract is AccessControl {
         companiesCount++;
         if (companiesCount == totalCompanies) {
             // all companies have reported their data
-            emit companyDataReceived(company, true);
+            emit companyDataReceived(company, true, totalCO2Company, totalDistanceCompany);
             //calculateRanking(); // potentially change to emit an event and let ioCarb call the function so last reporting entity is not punished with gas fees
         } else {
-            emit companyDataReceived(company, false);
+            emit companyDataReceived(company, true, totalCO2Company, totalDistanceCompany);
         }
     }
 
@@ -132,7 +134,7 @@ contract RankingContract is AccessControl {
                 savings = Math.mulDiv(savings, 1, 1e18);
                 emit savingsCalculated(companyAddresses[i], savings);
                 mintingContract.mint(companyAddresses[i], savings); // mint tokens corresponding to CO2 savings
-            }
+            } 
         }
     }
 
