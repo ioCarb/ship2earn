@@ -5,12 +5,9 @@ use crate::utils::{is_registered, is_bound};
 
 mod utils;
 
-
 const REGISTRY_TABLE: &str = "deviceregistry";
 const BINDING_TABLE: &str = "devicebinding";
 const DATA_TABLE: &str = "devicedata";
-//const TEST_DATA: &str = "testdata";
-
 
 #[no_mangle]
 pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
@@ -20,7 +17,6 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
     let payload_str = get_data(rid as u32).unwrap();
     let payload_json: serde_json::Value = serde_json::from_str(std::str::from_utf8(&payload_str).unwrap()).unwrap();
 
-    //let topics = message_json["topics"].as_array().unwrap();
     let device_id = match payload_json["pebbleId"].as_str() {
         Some(device_id) => device_id,
         None => {
@@ -28,6 +24,7 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
             return -1;
         }
     };
+    
     let vehicle_id = match payload_json["vehicleId"].as_str() {
         Some(vehicle_id) => vehicle_id,
         None => {
@@ -90,6 +87,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
             return -1;
         }
     };
+
     let owner_wallet = match payload_json["wallet"].as_str() {
         Some(owner_wallet) => owner_wallet,
         None => {
@@ -97,6 +95,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
             return -1;
         }
     };
+
     let binding_status = match payload_json["isBound"].as_str() {
         Some(binding_status) => binding_status,
         None => {
@@ -181,6 +180,7 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32{
             return -1;
         }
     };
+
     let data = match payload_json["message"].as_str() {
         Some(data) => data,
         None => {
@@ -188,6 +188,7 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32{
             return -1;
         }
     };
+
     let timestamp = match payload_json["timestamp"].as_str() {
         Some(timestamp) => timestamp,
         None => {
@@ -214,33 +215,28 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32{
         Ok(false) | Err(_) => return -1,
         Ok(true) => {}
     }
-
-    /*if verify_signature(&data, &signature) {
-        log_info("Signature verification succeeded").unwrap();*/
-
-        // Insert data into the database
-        log_info(&format!("Adding data from device {} to the database", device_id)).unwrap();
-        let sql = format!(
-            "INSERT INTO {} (device_id, data, timestamp) VALUES (?,?,?);",
-            DATA_TABLE
-        );
-        match execute(&sql, &[&device_id, &data, &timestamp]) {
-            Ok(_) => {
-                log_info(&format!("Data from device {} has been added to the database", device_id)).unwrap();
-            }
-            Err(e) => {
-                log_error(&format!("Failed to add device data: {}", e)).unwrap();
-                return -1;
-            }
+   
+    // Insert data into the database
+    log_info(&format!("Adding data from device {} to the database", device_id)).unwrap();
+    let sql = format!(
+        "INSERT INTO {} (device_id, data, timestamp) VALUES (?,?,?);",
+        DATA_TABLE
+    );
+    match execute(&sql, &[&device_id, &data, &timestamp]) {
+        Ok(_) => {
+            log_info(&format!("Data from device {} has been added to the database", device_id)).unwrap();
         }
-    /*} else {
-        log_info("Signature verification failed").unwrap();
-    }*/
+        Err(e) => {
+            log_error(&format!("Failed to add device data: {}", e)).unwrap();
+            return -1;
+        }
+    }
     return 0;
 }
 
 
-// Used for testing for now
+// For now registration is done directly on the blockchain
+/*
 #[no_mangle]
 pub extern "C" fn handle_registration_call(rid: i32) -> i32 {
     log_info("New device registration call detected").unwrap();
@@ -259,7 +255,7 @@ pub extern "C" fn handle_registration_call(rid: i32) -> i32 {
     log_info(&format!("Vehicle ID: {}", vehicle_id)).unwrap();
     log_info(&format!("Wallet Address: {}", wallet_address)).unwrap();
 
-    /*let public_key = get_public_key_for_device(device_id).await.unwrap();
+    let public_key = get_public_key_for_device(device_id).await.unwrap();
     //let signature = get_signature_for_device(device_id).await.unwrap();
 
     if verify_signature(&public_key, &registration_request.device_id, &registration_request.user_id).await {
@@ -298,7 +294,7 @@ pub extern "C" fn handle_registration_call(rid: i32) -> i32 {
          }
      } else {
          log("Signature verification failed");
-     }*/
+     }
 
     return 0;
-}
+}*/
