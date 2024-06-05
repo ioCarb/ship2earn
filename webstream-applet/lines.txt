@@ -1,0 +1,11 @@
+cargo llvm-lines --target=wasm32-wasi --lib --release | head -n 10
+  Lines                  Copies               Function name
+  -----                  ------               -------------
+  4535811                82831                (TOTAL)
+  1121847 (24.7%, 24.7%)  1081 (1.3%,  1.3%)  serde_cbor::de::Deserializer<R>::parse_value
+   331296 (7.3%, 32.0%)    696 (0.8%,  2.1%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::BinaryExpression<Op,L,R,Out>>::deserialize::__Visitor<Op,L,R,Out> as serde::de::Visitor>::visit_map
+   268922 (5.9%, 38.0%)   1081 (1.3%,  3.5%)  serde_cbor::de::Deserializer<R>::parse_indefinite_str
+   217034 (4.8%, 42.8%)   1081 (1.3%,  4.8%)  serde_cbor::de::Deserializer<R>::parse_indefinite_bytes
+   191300 (4.2%, 47.0%)   5768 (7.0%, 11.7%)  serde_cbor::de::Deserializer<R>::recursion_checked
+   154512 (3.4%, 50.4%)    696 (0.8%, 12.6%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::BinaryExpression<Op,L,R,Out>>::deserialize::__Visitor<Op,L,R,Out> as serde::de::Visitor>::visit_seq
+   127975 (2.8%, 53.2%)   1081 (1.3%, 13.9%)  serde_cbor::de::Deserializer<R>::parse_str

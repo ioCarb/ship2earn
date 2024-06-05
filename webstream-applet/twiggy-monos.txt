@@ -1,0 +1,165 @@
+twiggy monos target/wasm32-wasi/release/webstream_applet.wasm --max-generics 5 --max-monos 30
+ Apprx. Bloat Bytes │ Apprx. Bloat % │ Bytes    │ %      │ Monomorphizations
+────────────────────┼────────────────┼──────────┼────────┼─────────────────────────────────────────────────────────────────────────────────────────────────
+           10180360 ┊         62.65% ┊ 10193115 ┊ 62.73% ┊ serde_cbor::de::Deserializer<R>::parse_value
+                    ┊                ┊    12755 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h1fae88b46f6424d7
+                    ┊                ┊    12755 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::ha02b7cd32eb2d68e
+                    ┊                ┊    12755 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hc08e52c31be59254
+                    ┊                ┊    12755 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hdd1a2e344eb7c884
+                    ┊                ┊    12755 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::he2487e45d13dd757
+                    ┊                ┊    12755 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hfad631ab663c116d
+                    ┊                ┊    12653 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h0a40a63a7bc3fe33
+                    ┊                ┊    12653 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h16d96151b5e00cb4
+                    ┊                ┊    12653 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h78cdab36d211868e
+                    ┊                ┊    12653 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hbb3d033411955468
+                    ┊                ┊    12653 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hf565e7885f398df4
+                    ┊                ┊    12653 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hfa9604683a17d9ba
+                    ┊                ┊    12644 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h19c3a62fee26970d
+                    ┊                ┊    12644 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hc82baddc1bf2dfbc
+                    ┊                ┊    12527 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h6809133575811e2c
+                    ┊                ┊    12527 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h962883f136efc13d
+                    ┊                ┊    12527 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::h9fffd5d934567cab
+                    ┊                ┊    12527 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hb01c7e5b8d5f9c7c
+                    ┊                ┊    12527 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hb9b44e2da6f5f5eb
+                    ┊                ┊    12527 ┊  0.08% ┊     serde_cbor::de::Deserializer<R>::parse_value::hcd3a066b6d203b2e
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h0d1706fe9c6d6e94
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h14d8de7840e8bb10
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h14dd145dd8e6409d
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h45b3b12b09d9e770
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h5373f05dc28e01e3
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h5465b39ae87e57fa
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h5b5bb32ab2fd8fb5
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h7be4deac3333499d
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::h865b923aea7e149d
+                    ┊                ┊    12137 ┊  0.07% ┊     serde_cbor::de::Deserializer<R>::parse_value::hefec1002c4bfc839
+                    ┊                ┊  9818847 ┊ 60.43% ┊     ... and 1051 more.
+            1417733 ┊          8.73% ┊  1421171 ┊  8.75% ┊ serde_cbor::de::Deserializer<R>::parse_map
+                    ┊                ┊     3438 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::ha4d9544f6d5cbb98
+                    ┊                ┊     3438 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hfa76f37bf182630e
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h1386a4cda01c319a
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h181686e54b65023f
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h537c57ba59c0643f
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h7e029c187bb880b8
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h84fe12a74d378bb3
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h95b4d0d2dacc4f6b
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::ha32927cd6dd83384
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::had077dbc6d726922
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hfc48694ddbad665c
+                    ┊                ┊     3193 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hfefd61420254fdf0
+                    ┊                ┊     3081 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h1276590c12ac85fb
+                    ┊                ┊     3081 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h5c262c987b4cedb5
+                    ┊                ┊     3081 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h6360b7cb2e0ddb80
+                    ┊                ┊     3081 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h6b59c182b83e54d5
+                    ┊                ┊     3081 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h6bb87c01d9484bbd
+                    ┊                ┊     3081 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hb77523a9ce9455d5
+                    ┊                ┊     2999 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h2bc1d857ac2d97eb
+                    ┊                ┊     2999 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h7af879eda3d49c8e
+                    ┊                ┊     2999 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hb1057d6c9b62d43d
+                    ┊                ┊     2999 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hb80dc576b5db4089
+                    ┊                ┊     2999 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hc5b355257855742c
+                    ┊                ┊     2999 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::hfdf0fc2b62c8ddeb
+                    ┊                ┊     2962 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h03ad1d5c61007056
+                    ┊                ┊     2962 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h1fa13935bdff2c5a
+                    ┊                ┊     2962 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h3615279f24f158cc
+                    ┊                ┊     2962 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h4e92b5119c500692
+                    ┊                ┊     2962 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h99fa8154e4333de9
+                    ┊                ┊     2962 ┊  0.02% ┊     serde_cbor::de::Deserializer<R>::parse_map::h9c4ea9346094b06e
+                    ┊                ┊  1328113 ┊  8.17% ┊     ... and 819 more.
+             966381 ┊          5.95% ┊   968201 ┊  5.96% ┊ serde_cbor::de::Deserializer<R>::parse_array
+                    ┊                ┊     1820 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h4250c549e1dd6712
+                    ┊                ┊     1820 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h76810a7f0cfe2696
+                    ┊                ┊     1820 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::haa413433297bd034
+                    ┊                ┊     1820 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::had9b9b833791afe9
+                    ┊                ┊     1820 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::haf18353546e91cfa
+                    ┊                ┊     1820 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::hc9c05628972ad4e5
+                    ┊                ┊     1628 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::hbb707355545759f5
+                    ┊                ┊     1628 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::hf5193e2d725bbb94
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h169ab8a56fc3cccb
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h20bfd26dbd0fd650
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h27db5c35ab7ca4c0
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h2995fd07c38bd21b
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h2bc6b0c02a07f023
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h8efa813b31b66e12
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h978d30f3eb1168a0
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h9c52b92738cdcc3d
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::ha00e1445c407349a
+                    ┊                ┊     1619 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::hcd7a3b713c20924c
+                    ┊                ┊     1599 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h0a12dd40db9661a9
+                    ┊                ┊     1599 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h0b80afbda6fd4889
+                    ┊                ┊     1599 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h395f988b0f916df2
+                    ┊                ┊     1599 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h6ab380a0cc57eae0
+                    ┊                ┊     1599 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h7522f8ae7dbd774b
+                    ┊                ┊     1599 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h9711c434e8d4c7a9
+                    ┊                ┊     1568 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h759044c77101b9bc
+                    ┊                ┊     1568 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::ha2ea0b352a71cf0e
+                    ┊                ┊     1554 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h2e3472ac3e0d9ce5
+                    ┊                ┊     1554 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::hff795ad7b2957673
+                    ┊                ┊     1543 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h0a3070cafa517a57
+                    ┊                ┊     1543 ┊  0.01% ┊     serde_cbor::de::Deserializer<R>::parse_array::h0aca7fd351cf3302
+                    ┊                ┊   918911 ┊  5.66% ┊     ... and 926 more.
+             303309 ┊          1.87% ┊   309305 ┊  1.90% ┊ serde_cbor::de::Deserializer<R>::parse_enum
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h12772bcfb6599562
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h2e69bde2b3842097
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h3d3ec9836db943ca
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h6085c5ff5a1be541
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h63043bcb8a9358da
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h6bb0b14a21336a69
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h77039b23ab427c25
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h7bff9c7183e5e74b
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hb1003ff64f305cb3
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hb61d9b0fde50e946
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hbb1d0a193666db09
+                    ┊                ┊     5996 ┊  0.04% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hf7897cd64567930b
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h130637a44b67533e
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h14da8c8446630e23
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h2fc4a55ab9c11efb
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h480667ee69d84f0f
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h7014a75199a198a6
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h8ceb71d25304aa43
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hb8499f885924848b
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hbb074bcc536336fe
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hc21781d5353a1ce6
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hd5f2bc9073e16877
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hfbdeb15a20b200b6
+                    ┊                ┊     5550 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::hfc978fde9f286616
+                    ┊                ┊     5216 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h00f8ccfa6b11b320
+                    ┊                ┊     5216 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h386b1b5509a042c4
+                    ┊                ┊     5216 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h38e35d9d0824c3aa
+                    ┊                ┊     5216 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h88ac9de29655a115
+                    ┊                ┊     5216 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h89ddf03a4ae6fc99
+                    ┊                ┊     5216 ┊  0.03% ┊     serde_cbor::de::Deserializer<R>::parse_enum::h8c5d7f72be306a2b
+                    ┊                ┊   139457 ┊  0.86% ┊     ... and 91 more.
+             202789 ┊          1.25% ┊   210412 ┊  1.29% ┊ <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize
+                    ┊                ┊     7623 ┊  0.05% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h2798cf9a09055093
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h227999a65410bc8b
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h3bb2efda7d2dcff4
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h50cd92be657c93d3
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h6ef35d852573c74b
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::ha612e5d5e819963f
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::ha66583dd5c922c7b
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hbb9db166c57359f3
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hc789f75c0908ee12
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hca302afe06485584
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::he792c73f130f52d5
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::heb2d3669366ec1dc
+                    ┊                ┊     5453 ┊  0.03% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hf831ee9731d0b5f4
+                    ┊                ┊     3971 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h54170bf279568b92
+                    ┊                ┊     3971 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hb4965e623382735f
+                    ┊                ┊     3905 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h4adeab13f14b501e
+                    ┊                ┊     3905 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hc18d04f867f0fe0d
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h3438d5209a9b3e00
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h5d86f6c5fe6650c9
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h721cc46fa9ef1e6a
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h7539793ee7e55937
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h89ae1cbe9b83215e
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h9992175e9431abf7
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::ha2e772754e95b4fa
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hcc195d8d4bf8b02d
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hd0f2611f4d27f672
+                    ┊                ┊     3728 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::hf041abde9ce51498
+                    ┊                ┊     3719 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h66d9663b8157a400
+                    ┊                ┊     3719 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::ha00f1e7b639d1be5
+                    ┊                ┊     3702 ┊  0.02% ┊     <core::marker::PhantomData<T> as serde::de::DeserializeSeed>::deserialize::h1ae4730b5c58052a
+                    ┊                ┊    73181 ┊  0.45% ┊     ... and 45 more.
+            1770794 ┊         10.90% ┊  2269345 ┊ 13.97% ┊ ... and 4289 more.
+           14841366 ┊         91.34% ┊ 15371549 ┊ 94.60% ┊ Σ [4449 Total Rows]
