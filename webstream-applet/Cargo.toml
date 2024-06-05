@@ -10,7 +10,7 @@ edition = "2021"
 lto = true # 27->20MB
 opt-level = 'z' # for further bin size optimizations
 codegen-units = 1
-strip = true
+#strip = true
 rustflags = ["-Zshare-generics"]
 
 [build]

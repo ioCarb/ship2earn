@@ -74,11 +74,7 @@ pub fn witness(_: i32) -> i32 {
 
     match ProgEnum::deserialize(&mut reader).unwrap() {
         ProgEnum::Bn128Program(p) => compute_witness(p),
-        ProgEnum::Bls12_377Program(p) => compute_witness(p),
-        ProgEnum::Bls12_381Program(p) => compute_witness(p),
-        ProgEnum::Bw6_761Program(p) => compute_witness(p),
-        ProgEnum::PallasProgram(p) => compute_witness(p),
-        ProgEnum::VestaProgram(p) => compute_witness(p),
+        _ => panic!()
     }
     .unwrap();
 
@@ -116,6 +112,8 @@ fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
             &ir_prog.solvers,
         )
         .map_err(|e| format!("Execution failed: {}", e))?;
+
+    return Ok(());
 
     log_info("2");
 
