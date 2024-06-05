@@ -1,3 +1,5 @@
+cargo-features = ["profile-rustflags"]
+
 [package]
 name = "webstream-applet"
 version = "0.1.0"
@@ -5,13 +7,15 @@ edition = "2021"
 
 # for wasm
 [profile.release]
-lto = true
+lto = true # 27->20MB
 opt-level = 'z' # for further bin size optimizations
 codegen-units = 1
 strip = true
+rustflags = ["-Zshare-generics"]
 
 [build]
 target = "wasm32-wasi"
+rustflags = ["-Zshare-generics"]
 
 [lib]
 crate-type = ["cdylib"]
@@ -20,28 +24,28 @@ path = "src/lib.rs"
 [dependencies]
 #zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_core", default-features = false
 #zokrates_core = { version = "0.7", git = "https://github.com/ioCarb/ZoKrates", workspace = "zokrates_core", default-features = false }
-zokrates_core = { version = "0.7", path = "./../ZoKrates/zokrates_core",  default-features = false }
+zokrates_core = { version = "0.7", path = "./../../ZoKrates/zokrates_core",  default-features = false }
 
 #zokrates_ast = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_ast", default-features = false }
 #zokrates_ast = { version = "0.1", git = "https://github.com/ioCarb/ZoKrates", workspace = "zokrates_ast", default-features = false }
-zokrates_ast = { version = "0.1", path = "./../ZoKrates/zokrates_ast",  default-features = false }
+zokrates_ast = { version = "0.1", path = "./../../ZoKrates/zokrates_ast",  default-features = false }
 
 #zokrates_field = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_field", default-features =
 #zokrates_field = { version = "0.5", git = "https://github.com/ioCarb/ZoKrates", workspace = "zokrates_field", default-features = false }
-zokrates_field = { version = "0.5", path = "./../ZoKrates/zokrates_field",  default-features = false }
+zokrates_field = { version = "0.5", path = "./../../ZoKrates/zokrates_field",  default-features = false }
 
 #zokrates_interpreter = { version = "0.1", ://github.com/Zokrates/ZoKrates", workspace = "zokrates_interpreter",default-features = false }
 #zokrates_interpreter = { version = "0.1", git = "https://github.com/ioCarb/ZoKrates", workspace = "zokrates_interpreter",default-features = false }
-zokrates_interpreter = { version = "0.1", path = "./../ZoKrates/zokrates_interpreter", default-features = false }
-#zokrates_interpreter = { version="0.1", path = "./../ZoKrates/zokrates_interpreter/", default-features = false }
+zokrates_interpreter = { version = "0.1", path = "./../../ZoKrates/zokrates_interpreter", default-features = false }
+#zokrates_interpreter = { version="0.1", path = "./../../ZoKrates/zokrates_interpreter/", default-features = false }
 
 #zokrates_fs_resolver = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", workspace="zokrates_fs_resolver" }
 #zokrates_fs_resolver = { version = "0.5", git = "https://github.com/ioCarb/ZoKrates", workspace="zokrates_fs_resolver" }
-zokrates_fs_resolver = { version = "0.5", path = "./../ZoKrates/zokrates_fs_resolver" }
+zokrates_fs_resolver = { version = "0.5", path = "./../../ZoKrates/zokrates_fs_resolver" }
 
 #zokrates_circom = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", workspace="zokrates_circom" }
 #zokrates_circom = { version = "0.1", git = "https://github.com/ioCarb/ZoKrates", workspace="zokrates_circom" }
-zokrates_circom = { version = "0.1", path = "./../ZoKrates/zokrates_circom", default-features = false }
+zokrates_circom = { version = "0.1", path = "./../../ZoKrates/zokrates_circom", default-features = false }
 
 hex = "0.4.3"
 ethabi ={ version =  "17.2.0", default-features = false, features = ["full-serde"] }
