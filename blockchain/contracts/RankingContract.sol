@@ -119,7 +119,8 @@ contract RankingContract is AccessControl {
         avgCO2PerKm = Math.mulDiv(totalCO2, 1e18, totalDistance)+1;
 
         calcCO2Savings();
-        resetState();
+
+        //resetState(); to be evaluated in regards to use case
     }
 
     function calcCO2Savings() private {
