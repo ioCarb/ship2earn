@@ -1,16 +1,20 @@
 require('dotenv').config();
 
 async function calculate(contractAddress, signer) {
+  const chalk = (await import('chalk')).default;
     const Contract = await ethers.getContractAt("RankingContract", contractAddress, signer);
     Contract.on("savingsCalculated", (address, savings) => {
       console.log(`Company ${address} saved ${savings} CO2.`);
     });
     const MintContract = await ethers.getContractAt("MintingContract", process.env.MINTING_CONTRACT_ADDRESS, signer);
     MintContract.on("Minted", (address, amount) => {
-      console.log(`Company ${address} received ${amount} CRB.`);
+      console.log(chalk.green(`Event: Company ${address} received ${amount} CRB.`));
     });
     const tx = await Contract.calculateRanking({gasLimit: 6000000});
-    await tx.wait();
+    console.log(`Transaction hash: ${tx.hash}`);
+    receipt = await tx.wait();
+    console.log(`Transaction confirmed in block: ${receipt.blockNumber}`);
+    console.log(`Gas used: ${receipt.gasUsed.toString()}`);
   }
 
 async function main() {

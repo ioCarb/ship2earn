@@ -21,7 +21,6 @@ interface IMintingContract {
 
 contract RankingContract is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    bytes32 public constant MINT_ROLE = keccak256("MINT_ROLE");
     bytes32 public constant RANKING_ROLE = keccak256("RANKING_ROLE");
 
     // necessary company data to calculate ranking and savings, stored to process after final reporting
@@ -62,6 +61,7 @@ contract RankingContract is AccessControl {
         address mintingContract
     );
 
+    // sets the total number of companies that should report their data (will be changed to adjust automatically)
     function setTotalCompanies(
         uint256 _totalCompanies
     ) public onlyRole(ADMIN_ROLE) {
@@ -72,6 +72,7 @@ contract RankingContract is AccessControl {
         return totalCompanies;
     }
 
+    // sets the role that is allowed to call the receiveData function
     function setRankingRole(address _rankingRole) public onlyRole(ADMIN_ROLE) {
         _grantRole(RANKING_ROLE, _rankingRole);
         emit rankingRoleSet(_rankingRole);
