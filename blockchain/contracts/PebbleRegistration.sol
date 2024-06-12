@@ -2,7 +2,13 @@
 pragma solidity ^0.8.24;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-// import "hardhat/console.sol";
+
+/**
+ * @title PebbleRegistration
+ * @dev Contract to register a Pebble to a vehicle
+ * Done: add set functions for vehicles -> addVehicle
+ * Done: add get functions for vehicles -> getPebble
+ */
 
 contract PebbleRegistration is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -16,9 +22,17 @@ contract PebbleRegistration is AccessControl {
     // Mapping from device ID to Device struct
     mapping(string => Pebble) public pebbles;
 
+    struct Vehicle {
+        string vehicleId;
+        string vehicleType;
+        uint256 avgEmissions;
+    }
+
+    mapping(string => Vehicle) public vehicles;
+
     // Constructor to set the admin address
-    constructor(address admin) {
-        _grantRole(ADMIN_ROLE, admin);
+    constructor() {
+        _grantRole(ADMIN_ROLE, msg.sender);
     }
 
     modifier onlyUnregisteredPebble(string calldata pebbleId) {
@@ -30,7 +44,11 @@ contract PebbleRegistration is AccessControl {
     }
 
     // Event for device registration
-    event PebbleRegistered(string pebbleId, string vehicleId, bool isRegistered);
+    event PebbleRegistered(
+        string pebbleId,
+        string vehicleId,
+        bool isRegistered
+    );
 
     // Function to get the vehicle ID for a given pebble ID
     function getPebble(
@@ -44,17 +62,29 @@ contract PebbleRegistration is AccessControl {
     }
 
     // Function to register a device to a vehicle
-    function registerPebble(string calldata pebbleId, string calldata vehicleId) 
-        public onlyRole(ADMIN_ROLE) {
+    function registerPebble(
+        string calldata pebbleId,
+        string calldata vehicleId
+    ) public onlyRole(ADMIN_ROLE) {
         // If the pebble is already registered, return and emit event -> false means already registered
         if (pebbles[pebbleId].isRegistered) {
             emit PebbleRegistered(pebbleId, vehicleId, false);
             return;
         }
-
         pebbles[pebbleId] = Pebble({vehicleId: vehicleId, isRegistered: true});
         pebblesCount++;
         emit PebbleRegistered(pebbleId, vehicleId, true);
     }
-    // Function  
+    // Function to add a vehicle type
+    function addVehicle(
+        string calldata vehicleId,
+        string calldata vehicleType,
+        uint256 avgEmissions
+    ) public onlyRole(ADMIN_ROLE) {
+        vehicles[vehicleId] = Vehicle({
+            vehicleId: vehicleId,
+            vehicleType: vehicleType,
+            avgEmissions: avgEmissions
+        });
+    }
 }
