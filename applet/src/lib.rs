@@ -52,7 +52,7 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
             log_info("Proceeding").unwrap();
         }
         Err(e) => {
-            log_error(&format!("{}", e)).unwrap();
+            log_error(&e).unwrap();
             return -1;
         }
     }
@@ -81,7 +81,7 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
         }
     }
 
-    return 0;
+    0
 }
 
 #[no_mangle]
@@ -129,7 +129,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
                 device_id
             ))
             .unwrap();
-            return -1;
+            -1
         }
         Ok(true) => {
             log_info(&format!("Device {} is registered", device_id)).unwrap();
@@ -155,11 +155,11 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
                             device_id
                         ))
                         .unwrap();
-                        return 0;
+                        0
                     }
                     Err(e) => {
                         log_error(&format!("Failed to add device: {}", e)).unwrap();
-                        return -1;
+                        -1
                     }
                 }
             } else {
@@ -179,18 +179,18 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
                             device_id
                         ))
                         .unwrap();
-                        return 0;
+                        0
                     }
                     Err(e) => {
                         log_error(&format!("Failed to remove device: {}", e)).unwrap();
-                        return -1;
+                        -1
                     }
                 }
             }
         }
         Err(e) => {
-            log_error(&format!("{}", e)).unwrap();
-            return -1;
+            log_error(&e).unwrap();
+            -1
         }
     }
 }
@@ -273,7 +273,7 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32 {
             return -1;
         }
     }
-    return 0;
+    0
 }
 
 // For now registration is done directly on the blockchain

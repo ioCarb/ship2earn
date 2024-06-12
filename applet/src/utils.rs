@@ -13,14 +13,14 @@ pub fn is_registered(device_id: &str) -> Result<bool, String> {
         Ok(result) => {
             if result.is_empty() {
                 log_info(&format!("Device {} is not registered", device_id)).unwrap();
-                return Ok(false);
+                Ok(false)
             } else {
-                return Ok(true);
+                Ok(true)
             }
         }
         Err(e) => {
             log_error(&format!("Failed to query registry database: {}", e)).unwrap();
-            return Err(e.to_string());
+            Err(e.to_string())
         }
     }
 }
@@ -34,14 +34,14 @@ pub fn is_bound(device_id: &str) -> Result<bool, String> {
         Ok(result) => {
             if result.is_empty() {
                 log_info(&format!("Device {} is not bound to a wallet", device_id)).unwrap();
-                return Ok(false);
+                Ok(false)
             } else {
-                return Ok(true);
+                Ok(true)
             }
         }
         Err(e) => {
             log_error(&format!("Failed to query binding database: {}", e)).unwrap();
-            return Err(e.to_string());
+            Err(e.to_string())
         }
     }
 }
