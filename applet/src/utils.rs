@@ -1,5 +1,5 @@
-use ws_sdk::log::{log_error, log_info};
 use ws_sdk::database::sql::*;
+use ws_sdk::log::{log_error, log_info};
 
 const REGISTRY_TABLE: &str = "deviceregistry";
 const BINDING_TABLE: &str = "devicebinding";
@@ -7,7 +7,7 @@ const BINDING_TABLE: &str = "devicebinding";
 pub fn is_registered(device_id: &str) -> Result<bool, String> {
     let sql_check_registry = format!(
         "SELECT device_id FROM {} WHERE device_id = ?;",
-        REGISTRY_TABLE        
+        REGISTRY_TABLE
     );
     match query(&sql_check_registry, &[&device_id]) {
         Ok(result) => {
