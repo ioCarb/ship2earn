@@ -74,7 +74,7 @@ pub fn witness(_: i32) -> i32 {
 
     match ProgEnum::deserialize(&mut reader).unwrap() {
         ProgEnum::Bn128Program(p) => compute_witness(p),
-        _ => panic!()
+        _ => panic!(),
     }
     .unwrap();
 
@@ -94,7 +94,7 @@ fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
         )));
 
     // get arguments
-    let raw_arguments = "123 456";
+    let raw_arguments = "337 113569";
     let arguments = raw_arguments
         .split(' ')
         .map(|x| T::try_from_dec_str(x))
@@ -113,30 +113,37 @@ fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
         )
         .map_err(|e| format!("Execution failed: {}", e))?;
 
-    return Ok(());
-
     log_info("2");
 
-    let mut writer = WsFs {
-        name: "witness",
-        buf: Vec::<u8>::new(),
-        panicked: false,
-    };
+    // let mut writer = WsFs {
+    //     name: "witness",
+    //     buf: Vec::<u8>::new(),
+    //     panicked: false,
+    // };
+    let mut writer = Cursor::new(Vec::new());
 
     witness
-        .write(writer)
+        .write(writer.clone())
         .map_err(|why| format!("Could not save witness: {:?}", why))?;
 
-    let output = get("witness").unwrap();
+    // let output = match get("witness") {
+    //     Ok(str) => str,
+    //     Err(_) => {
+    //         log_error("couldnt find witness");
+    //         panic!()
+    //     }
+    // };
 
-    let output = match get("witness") {
-        Ok(str) => str,
-        Err(_) => {
-            log_error("couldnt find witness");
-            panic!()
-        }
-    };
-    log_info(std::str::from_utf8(output.as_ref()).unwrap());
+    set("asdf", "asdf".into());
+    let test = get("asdf").unwrap();
+    log_info(std::str::from_utf8(&test).unwrap());
+
+    let mut output = &mut vec![];
+    writer.read_to_end(output).unwrap();
+
+    set("witness", output.to_vec());
+
+    log_info(std::str::from_utf8(output).unwrap());
     log_info("finished computing witness");
 
     Ok(())
