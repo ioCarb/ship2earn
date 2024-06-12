@@ -123,7 +123,7 @@ fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
     let mut writer = Cursor::new(Vec::new());
 
     witness
-        .write(writer.clone())
+        .write(&mut writer)
         .map_err(|why| format!("Could not save witness: {:?}", why))?;
 
     // let output = match get("witness") {
