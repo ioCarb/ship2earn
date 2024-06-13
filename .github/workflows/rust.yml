@@ -22,19 +22,19 @@ jobs:
       working-directory: ./applet
     - name: Check formatting
       run: cargo fmt -- --check
-      working-directory: ./applet
+      working-directory: applet
 
     - name: Install clippy
       run: rustup component add clippy
-      working-directory: ./applet
+      working-directory: applet
     - name: Run clippy
       run: cargo clippy -- -D warnings
-      working-directory: ./applet
+      working-directory: applet
       
     - name: Build
       run: cargo build --verbose
-      working-directory: ./applet
+      working-directory: applet
       
     - name: Run tests
       run: cargo test --verbose --lib -- --nocatpure
-      working-directory: ./applet
+      working-directory: applet
