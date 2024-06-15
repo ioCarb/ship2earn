@@ -47,6 +47,9 @@ zokrates_fs_resolver = { version = "0.5", path = "./../../ZoKrates/zokrates_fs_r
 #zokrates_circom = { version = "0.1", git = "https://github.com/ioCarb/ZoKrates", workspace="zokrates_circom" }
 zokrates_circom = { version = "0.1", path = "./../../ZoKrates/zokrates_circom", default-features = false }
 
+zokrates_proof_systems = { version = "0.1", path = "./../../ZoKrates/zokrates_proof_systems/", default-features = false }
+zokrates_ark = { version = "0.1", path = "./../../ZoKrates/zokrates_ark", default-features = false }
+
 hex = "0.4.3"
 ethabi ={ version =  "17.2.0", default-features = false, features = ["full-serde"] }
 sha2 = "0.10.6"
@@ -61,6 +64,6 @@ typed-arena = "1.4.1"
 ws-sdk = "0.1.17"
 rust-embed = "8.4.0"
 error = "0.1.9"
-
-# [patch."https://github.com/Zokrates/ZoKrates"]
-# zokrates_common = { git = "https://github.com/Zokrates/ZoKrates", workspace = "zokrates_common" }
+random = "0.14.0"
+rand = "0.8.5"
+serde_json = "1.0.117"
