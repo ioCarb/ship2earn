@@ -127,7 +127,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
             -1
         }
         Ok(true) => {
-            log_info(&format!("Proceeding")).unwrap();
+            log_info("Proceeding").unwrap();
 
             // Check if the device has been bound or unbound
             if binding_status == "true" || binding_status == "True" {
