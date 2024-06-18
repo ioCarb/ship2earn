@@ -16,9 +16,7 @@ pub fn is_registered(device_id: &str) -> Result<bool, String> {
                 Ok(true)
             }
         }
-        Err(e) => {
-            Err(e.to_string())
-        }
+        Err(e) => Err(e.to_string()),
     }
 }
 
@@ -35,8 +33,6 @@ pub fn is_bound(device_id: &str) -> Result<bool, String> {
                 Ok(true)
             }
         }
-        Err(e) => {
-            Err(e.to_string())
-        }
+        Err(e) => Err(e.to_string()),
     }
 }
