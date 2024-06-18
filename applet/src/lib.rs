@@ -52,7 +52,7 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
             log_info("Proceeding").unwrap();
         }
         Err(e) => {
-            log_error(&e).unwrap();
+            log_error(&format!("Failed to query registry database: {}", e)).unwrap();
             return -1;
         }
     }
@@ -80,7 +80,6 @@ pub extern "C" fn handle_device_registered(rid: i32) -> i32 {
             return -1;
         }
     }
-
     0
 }
 
@@ -124,15 +123,11 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
     log_info(&format!("Checking if device {} is registered", device_id)).unwrap();
     match is_registered(device_id) {
         Ok(false) => {
-            log_info(&format!(
-                "Device {} must first be registered to be bound to a wallet",
-                device_id
-            ))
-            .unwrap();
+            log_info(&format!("Device {} is not registered", device_id)).unwrap();
             -1
         }
         Ok(true) => {
-            log_info(&format!("Device {} is registered", device_id)).unwrap();
+            log_info(&format!("Proceeding")).unwrap();
 
             // Check if the device has been bound or unbound
             if binding_status == "true" || binding_status == "True" {
@@ -189,7 +184,7 @@ pub extern "C" fn handle_device_binding(rid: i32) -> i32 {
             }
         }
         Err(e) => {
-            log_error(&e).unwrap();
+            log_error(&format!("Failed to query registry database: {}", e)).unwrap();
             -1
         }
     }
@@ -226,7 +221,6 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32 {
             return -1;
         }
     };
-    //let signature = payload_json["signature"].as_str().unwrap();
 
     log_info(&format!("Device ID: {}", device_id)).unwrap();
     log_info(&format!("Data: {}", data)).unwrap();
@@ -235,8 +229,15 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32 {
     // Check if the device is registered
     log_info(&format!("Checking if device {} is registered", device_id)).unwrap();
     match is_registered(device_id) {
-        Ok(false) | Err(_) => return -1,
+        Ok(false) => {
+            log_info(&format!("Device {} is not registered", device_id)).unwrap();
+            return -1;
+        }
         Ok(true) => {}
+        Err(e) => {
+            log_error(&format!("Failed to query registry database: {}", e)).unwrap();
+            return -1;
+        }
     }
 
     // Check if the device is bound
@@ -246,8 +247,15 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32 {
     ))
     .unwrap();
     match is_bound(device_id) {
-        Ok(false) | Err(_) => return -1,
+        Ok(false) => {
+            log_info(&format!("Device {} is not bound to a wallet", device_id)).unwrap();
+            return -1;
+        }
         Ok(true) => {}
+        Err(e) => {
+            log_error(&format!("Failed to query binding database: {}", e)).unwrap();
+            return -1;
+        }
     }
 
     // Insert data into the database
@@ -275,67 +283,3 @@ pub extern "C" fn handle_device_data(rid: i32) -> i32 {
     }
     0
 }
-
-// For now registration is done directly on the blockchain
-/*
-#[no_mangle]
-pub extern "C" fn handle_registration_call(rid: i32) -> i32 {
-    log_info("New device registration call detected").unwrap();
-
-    let payload_str = get_data(rid as u32).unwrap();
-    let payload_json: serde_json::Value = serde_json::from_str(std::str::from_utf8(&payload_str).unwrap()).unwrap();
-    //let web3_url = std::env::var("WEB3_HTTP_URL").unwrap_or_else(|_| "http://localhost:8545".to_string());
-    //let web3 = web3::Web3::new(web3::transports::Http::new(&web3_url).unwrap());
-
-    // Parse the payload into a DeviceRegistrationRequest struct
-    let device_id = payload_json["device_id"].as_str().unwrap();
-    let vehicle_id = payload_json["vehicle_id"].as_str().unwrap();
-    let wallet_address = payload_json["wallet_address"].as_str().unwrap();
-
-    log_info(&format!("Device ID: {}", device_id)).unwrap();
-    log_info(&format!("Vehicle ID: {}", vehicle_id)).unwrap();
-    log_info(&format!("Wallet Address: {}", wallet_address)).unwrap();
-
-    let public_key = get_public_key_for_device(device_id).await.unwrap();
-    //let signature = get_signature_for_device(device_id).await.unwrap();
-
-    if verify_signature(&public_key, &registration_request.device_id, &registration_request.user_id).await {
-        log("Signature verification succeeded");
-
-         // Call the registerDevice function
-         let register_tx = contract_registry.call("registerDevice", (device_id,), None, Options::default()).await;
-
-         match register_tx {
-             Ok(tx) => {
-                 log(&format!("Device registered with transaction: {:?}", tx));
-                 // Wait for the transaction receipt to confirm success
-                 let receipt = web3.eth().transaction_receipt(tx).await.unwrap();
-
-                 if receipt.status == Some(U256::from(1)) {
-                     // Registration successful, proceed with binding
-                     let owner_address: Address = registration_request.wallet_address.parse().unwrap();
-
-                     let bind_tx = contract_binding.call("bindDevice", (device_id, owner_address), None, Options::default()).await;
-
-                     match bind_tx {
-                         Ok(tx) => {
-                             log(&format!("Device bound with transaction: {:?}", tx));
-                         }
-                         Err(e) => {
-                             log(&format!("Failed to bind device: {:?}", e));
-                         }
-                     }
-                 } else {
-                     log("Device registration transaction failed");
-                 }
-             }
-             Err(e) => {
-                 log(&format!("Device registration failed: {:?}", e));
-             }
-         }
-     } else {
-         log("Signature verification failed");
-     }
-
-    return 0;
-}*/

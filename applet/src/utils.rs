@@ -1,5 +1,4 @@
 use ws_sdk::database::sql::*;
-use ws_sdk::log::{log_error, log_info};
 
 const REGISTRY_TABLE: &str = "deviceregistry";
 const BINDING_TABLE: &str = "devicebinding";
@@ -12,14 +11,12 @@ pub fn is_registered(device_id: &str) -> Result<bool, String> {
     match query(&sql_check_registry, &[&device_id]) {
         Ok(result) => {
             if result.is_empty() {
-                log_info(&format!("Device {} is not registered", device_id)).unwrap();
                 Ok(false)
             } else {
                 Ok(true)
             }
         }
         Err(e) => {
-            log_error(&format!("Failed to query registry database: {}", e)).unwrap();
             Err(e.to_string())
         }
     }
@@ -33,14 +30,12 @@ pub fn is_bound(device_id: &str) -> Result<bool, String> {
     match query(&sql_check_binding, &[&device_id]) {
         Ok(result) => {
             if result.is_empty() {
-                log_info(&format!("Device {} is not bound to a wallet", device_id)).unwrap();
                 Ok(false)
             } else {
                 Ok(true)
             }
         }
         Err(e) => {
-            log_error(&format!("Failed to query binding database: {}", e)).unwrap();
             Err(e.to_string())
         }
     }
