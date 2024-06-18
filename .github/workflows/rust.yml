@@ -19,7 +19,7 @@ jobs:
     
     - name: Install rustfmt
       run: rustup component add rustfmt
-      working-directory: ./applet
+      working-directory: applet
     - name: Check formatting
       run: cargo fmt -- --check
       working-directory: applet
