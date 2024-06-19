@@ -10,7 +10,7 @@ edition = "2021"
 lto = true # 27->20MB
 opt-level = 'z' # for further bin size optimizations
 codegen-units = 1
-#strip = true
+strip = true
 rustflags = ["-Zshare-generics"]
 
 [build]
@@ -62,7 +62,7 @@ typed-arena = "1.4.1"
 
 # w3bstream stuff
 ws-sdk = "0.1.17"
-rust-embed = "8.4.0"
+rust-embed = { version = "8.4.0", features = ["compression"] }
 error = "0.1.9"
 random = "0.14.0"
 rand = "0.8.5"

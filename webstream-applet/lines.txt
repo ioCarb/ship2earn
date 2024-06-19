@@ -1,11 +1,100 @@
-cargo llvm-lines --target=wasm32-wasi --lib --release | head -n 10
   Lines                  Copies               Function name
   -----                  ------               -------------
-  4535811                82831                (TOTAL)
-  1121847 (24.7%, 24.7%)  1081 (1.3%,  1.3%)  serde_cbor::de::Deserializer<R>::parse_value
-   331296 (7.3%, 32.0%)    696 (0.8%,  2.1%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::BinaryExpression<Op,L,R,Out>>::deserialize::__Visitor<Op,L,R,Out> as serde::de::Visitor>::visit_map
-   268922 (5.9%, 38.0%)   1081 (1.3%,  3.5%)  serde_cbor::de::Deserializer<R>::parse_indefinite_str
-   217034 (4.8%, 42.8%)   1081 (1.3%,  4.8%)  serde_cbor::de::Deserializer<R>::parse_indefinite_bytes
-   191300 (4.2%, 47.0%)   5768 (7.0%, 11.7%)  serde_cbor::de::Deserializer<R>::recursion_checked
-   154512 (3.4%, 50.4%)    696 (0.8%, 12.6%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::BinaryExpression<Op,L,R,Out>>::deserialize::__Visitor<Op,L,R,Out> as serde::de::Visitor>::visit_seq
-   127975 (2.8%, 53.2%)   1081 (1.3%, 13.9%)  serde_cbor::de::Deserializer<R>::parse_str
+  3218125                65686                (TOTAL)
+   720852 (22.4%, 22.4%)   696 (1.1%,  1.1%)  serde_cbor::de::Deserializer<R>::parse_value
+   193256 (6.0%, 28.4%)    406 (0.6%,  1.7%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::BinaryExpression<Op,L,R,Out>>::deserialize::__Visitor<Op,L,R,Out> as serde::de::Visitor>::visit_map
+   172952 (5.4%, 33.8%)    696 (1.1%,  2.7%)  serde_cbor::de::Deserializer<R>::parse_indefinite_str
+   139544 (4.3%, 38.1%)    696 (1.1%,  3.8%)  serde_cbor::de::Deserializer<R>::parse_indefinite_bytes
+   122480 (3.8%, 41.9%)   3708 (5.6%,  9.4%)  serde_cbor::de::Deserializer<R>::recursion_checked
+    90132 (2.8%, 44.7%)    406 (0.6%, 10.1%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::BinaryExpression<Op,L,R,Out>>::deserialize::__Visitor<Op,L,R,Out> as serde::de::Visitor>::visit_seq
+    82300 (2.6%, 47.3%)    696 (1.1%, 11.1%)  serde_cbor::de::Deserializer<R>::parse_str
+    78260 (2.4%, 49.7%)    696 (1.1%, 12.2%)  serde_cbor::de::Deserializer<R>::parse_indefinite_map::{{closure}}
+    68516 (2.1%, 51.8%)    696 (1.1%, 13.2%)  serde_cbor::de::Deserializer<R>::parse_indefinite_array::{{closure}}
+    64536 (2.0%, 53.8%)    709 (1.1%, 14.3%)  <serde_cbor::de::IndefiniteSeqAccess<R> as serde::de::SeqAccess>::next_element_seed
+    49253 (1.5%, 55.4%)    696 (1.1%, 15.4%)  serde_cbor::de::Deserializer<R>::parse_map::{{closure}}
+    35895 (1.1%, 56.5%)    709 (1.1%, 16.5%)  <serde_cbor::de::SeqAccess<R> as serde::de::SeqAccess>::next_element_seed
+    34637 (1.1%, 57.6%)    696 (1.1%, 17.5%)  serde_cbor::de::Deserializer<R>::parse_array::{{closure}}
+    34162 (1.1%, 58.6%)    810 (1.2%, 18.7%)  <serde_cbor::de::VariantAccess<T> as serde::de::VariantAccess>::newtype_variant_seed
+    27840 (0.9%, 59.5%)    696 (1.1%, 19.8%)  serde_cbor::de::Deserializer<R>::parse_bytes
+    26685 (0.8%, 60.3%)    260 (0.4%, 20.2%)  alloc::raw_vec::RawVec<T,A>::grow_amortized
+    24946 (0.8%, 61.1%)   1111 (1.7%, 21.9%)  <core::result::Result<T,E> as core::ops::try_trait::Try>::branch
+    23338 (0.7%, 61.8%)    526 (0.8%, 22.7%)  serde::de::Visitor::visit_i128
+    20120 (0.6%, 62.4%)     76 (0.1%, 22.8%)  <&mut serde_cbor::de::Deserializer<R> as serde::de::Deserializer>::deserialize_enum
+    19488 (0.6%, 63.1%)    696 (1.1%, 23.9%)  serde_cbor::de::Deserializer<R>::parse_map
+    18858 (0.6%, 63.6%)     42 (0.1%, 23.9%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::ConditionalExpression<T,E>>::deserialize::__Visitor<T,E> as serde::de::Visitor>::visit_map
+    17259 (0.5%, 64.2%)    111 (0.2%, 24.1%)  <serde_cbor::de::MapAccess<R> as serde::de::MapAccess>::next_key_seed
+    15078 (0.5%, 64.6%)     42 (0.1%, 24.2%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::SelectExpression<T,E>>::deserialize::__Visitor<T,E> as serde::de::Visitor>::visit_map
+    13440 (0.4%, 65.1%)     42 (0.1%, 24.2%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::IdentifierExpression<I,E>>::deserialize::__Visitor<I,E> as serde::de::Visitor>::visit_map
+    12828 (0.4%, 65.5%)    181 (0.3%, 24.5%)  alloc::raw_vec::RawVec<T,A>::try_allocate_in
+    12528 (0.4%, 65.9%)    696 (1.1%, 25.6%)  serde_cbor::de::Deserializer<R>::parse_indefinite_map
+    12492 (0.4%, 66.2%)   1334 (2.0%, 27.6%)  <core::result::Result<T,F> as core::ops::try_trait::FromResidual<core::result::Result<core::convert::Infallible,E>>>::from_residual
+    11892 (0.4%, 66.6%)     75 (0.1%, 27.7%)  <serde_cbor::de::IndefiniteMapAccess<R> as serde::de::MapAccess>::next_key_seed
+    11298 (0.4%, 67.0%)    442 (0.7%, 28.4%)  core::result::Result<T,E>::map
+    11102 (0.3%, 67.3%)      1 (0.0%, 28.4%)  regex_automata::meta::strategy::new
+    10556 (0.3%, 67.6%)     28 (0.0%, 28.4%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::UnaryExpression<Op,In,Out>>::deserialize::__Visitor<Op,In,Out> as serde::de::Visitor>::visit_map
+     8824 (0.3%, 67.9%)    145 (0.2%, 28.7%)  <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq
+     8070 (0.3%, 68.2%)    525 (0.8%, 29.5%)  serde::de::Visitor::visit_bool
+     8066 (0.3%, 68.4%)      1 (0.0%, 29.5%)  <regex::exec::ExecNoSync as regex::re_trait::RegularExpression>::read_captures_at
+     7770 (0.2%, 68.7%)     42 (0.1%, 29.5%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::ConditionalExpression<T,E>>::deserialize::__Visitor<T,E> as serde::de::Visitor>::visit_seq
+     7725 (0.2%, 68.9%)    467 (0.7%, 30.2%)  serde::de::Visitor::visit_str
+     7702 (0.2%, 69.1%)     76 (0.1%, 30.3%)  serde_cbor::de::Deserializer<R>::parse_indefinite_enum::{{closure}}
+     7623 (0.2%, 69.4%)    461 (0.7%, 31.0%)  serde::de::Visitor::visit_bytes
+     7558 (0.2%, 69.6%)    526 (0.8%, 31.8%)  serde::de::Visitor::visit_f64
+     7478 (0.2%, 69.8%)    520 (0.8%, 32.6%)  serde::de::Visitor::visit_i64
+     6752 (0.2%, 70.0%)    148 (0.2%, 32.9%)  <alloc::vec::Vec<T> as alloc::vec::spec_from_iter_nested::SpecFromIterNested<T,I>>::from_iter
+     6737 (0.2%, 70.3%)    463 (0.7%, 33.6%)  serde::de::Visitor::visit_u64
+     6636 (0.2%, 70.5%)     14 (0.0%, 33.6%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::IfElseStatement<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_map
+     6580 (0.2%, 70.7%)     14 (0.0%, 33.6%)  <zokrates_ast::common::statements::_::<impl serde::de::Deserialize for zokrates_ast::common::statements::AssemblyConstraint<E>>::deserialize::__Visitor<E> as serde::de::Visitor>::visit_map
+     6335 (0.2%, 70.9%)     28 (0.0%, 33.7%)  <zokrates_ast::common::solvers::_::<impl serde::de::Deserialize for zokrates_ast::common::solvers::Solver<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_enum
+     6306 (0.2%, 71.1%)    562 (0.9%, 34.5%)  serde::de::Visitor::visit_map
+     6167 (0.2%, 71.2%)      1 (0.0%, 34.5%)  primitive_types::U512::overflowing_pow
+     6132 (0.2%, 71.4%)    492 (0.7%, 35.3%)  serde::de::Visitor::visit_unit
+     5964 (0.2%, 71.6%)     42 (0.1%, 35.3%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::SelectExpression<T,E>>::deserialize::__Visitor<T,E> as serde::de::Visitor>::visit_seq
+     5888 (0.2%, 71.8%)     16 (0.0%, 35.3%)  <zokrates_ast::common::statements::_::<impl serde::de::Deserialize for zokrates_ast::common::statements::LogStatement<E>>::deserialize::__Visitor<E> as serde::de::Visitor>::visit_map
+     5836 (0.2%, 72.0%)     76 (0.1%, 35.5%)  serde_cbor::de::Deserializer<R>::parse_enum_map::{{closure}}
+     5796 (0.2%, 72.2%)     42 (0.1%, 35.5%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::IdentifierExpression<I,E>>::deserialize::__Visitor<I,E> as serde::de::Visitor>::visit_seq
+     5626 (0.2%, 72.3%)     22 (0.0%, 35.6%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::ValueExpression<V>>::deserialize::__Visitor<V> as serde::de::Visitor>::visit_map
+     5426 (0.2%, 72.5%)      2 (0.0%, 35.6%)  <regex::re_trait::Matches<R> as core::iter::traits::iterator::Iterator>::next
+     5404 (0.2%, 72.7%)     14 (0.0%, 35.6%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::ZirFunction<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_map
+     5335 (0.2%, 72.8%)     11 (0.0%, 35.6%)  <ark_ff::fields::models::Fp256<P> as core::ops::arith::MulAssign<&ark_ff::fields::models::Fp256<P>>>::mul_assign
+     5138 (0.2%, 73.0%)     14 (0.0%, 35.6%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::DefinitionStatement<A,E>>::deserialize::__Visitor<A,E> as serde::de::Visitor>::visit_map
+     5124 (0.2%, 73.2%)     14 (0.0%, 35.6%)  <zokrates_ast::common::statements::_::<impl serde::de::Deserialize for zokrates_ast::common::statements::AssemblyAssignment<A,E>>::deserialize::__Visitor<A,E> as serde::de::Visitor>::visit_map
+     5096 (0.2%, 73.3%)     14 (0.0%, 35.7%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::AssertionStatement<B,E>>::deserialize::__Visitor<B,E> as serde::de::Visitor>::visit_map
+     5096 (0.2%, 73.5%)     14 (0.0%, 35.7%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::MultipleDefinitionStatement<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_map
+     5026 (0.2%, 73.6%)     14 (0.0%, 35.7%)  <zokrates_ast::zir::uint::_::<impl serde::de::Deserialize for zokrates_ast::zir::uint::UExpression<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_map
+     4872 (0.2%, 73.8%)     28 (0.0%, 35.8%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::UnaryExpression<Op,In,Out>>::deserialize::__Visitor<Op,In,Out> as serde::de::Visitor>::visit_seq
+     4844 (0.2%, 73.9%)    405 (0.6%, 36.4%)  <serde_cbor::de::UnitVariantAccess<R> as serde::de::VariantAccess>::newtype_variant_seed
+     4764 (0.1%, 74.1%)    272 (0.4%, 36.8%)  alloc::raw_vec::RawVec<T,A>::current_memory
+     4068 (0.1%, 74.2%)    143 (0.2%, 37.0%)  alloc::vec::Vec<T,A>::extend_trusted
+     3968 (0.1%, 74.3%)    360 (0.5%, 37.5%)  serde::de::Visitor::visit_seq
+     3936 (0.1%, 74.5%)     76 (0.1%, 37.7%)  serde_cbor::de::Deserializer<R>::parse_enum::{{closure}}
+     3640 (0.1%, 74.6%)     14 (0.0%, 37.7%)  <zokrates_ast::common::expressions::_::<impl serde::de::Deserialize for zokrates_ast::common::expressions::ReturnStatement<E>>::deserialize::__Visitor<E> as serde::de::Visitor>::visit_map
+     3640 (0.1%, 74.7%)     14 (0.0%, 37.7%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::AssemblyBlockStatement<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_map
+     3542 (0.1%, 74.8%)     14 (0.0%, 37.7%)  <zokrates_ast::zir::uint::_::<impl serde::de::Deserialize for zokrates_ast::zir::uint::UMetadata<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_map
+     3538 (0.1%, 74.9%)    146 (0.2%, 37.9%)  <core::iter::adapters::map::Map<I,F> as core::iter::traits::iterator::Iterator>::fold
+     3494 (0.1%, 75.0%)     72 (0.1%, 38.1%)  <serde_cbor::de::VariantAccess<T> as serde::de::EnumAccess>::variant_seed
+     3493 (0.1%, 75.1%)      1 (0.0%, 38.1%)  sha2::sha512::soft::sha512_digest_block_u64
+     3427 (0.1%, 75.2%)     22 (0.0%, 38.1%)  rlp::rlpin::BasicDecoder::decode_value
+     3423 (0.1%, 75.3%)     28 (0.0%, 38.1%)  <zokrates_ast::zir::uint::_::<impl serde::de::Deserialize for zokrates_ast::zir::uint::UExpressionInner<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_enum
+     3417 (0.1%, 75.4%)    264 (0.4%, 38.5%)  <alloc::raw_vec::RawVec<T,A> as core::ops::drop::Drop>::drop
+     3255 (0.1%, 75.5%)     28 (0.0%, 38.6%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::BooleanExpression<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_enum
+     3255 (0.1%, 75.6%)     28 (0.0%, 38.6%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::FieldElementExpression<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_enum
+     3240 (0.1%, 75.7%)   1620 (2.5%, 41.1%)  serde::de::VariantAccess::newtype_variant
+     3190 (0.1%, 75.8%)     29 (0.0%, 41.1%)  zokrates_ast::zir::result_folder::fold_binary_expression
+     3102 (0.1%, 75.9%)     76 (0.1%, 41.2%)  <alloc::vec::Vec<T,A> as core::clone::Clone>::clone
+     3044 (0.1%, 76.0%)      2 (0.0%, 41.3%)  regex_syntax::ast::parse::ParserI<P>::parse_with_comments
+     2959 (0.1%, 76.1%)    212 (0.3%, 41.6%)  alloc::raw_vec::RawVec<T,A>::grow_one
+     2928 (0.1%, 76.2%)    149 (0.2%, 41.8%)  alloc::vec::Vec<T,A>::push
+     2842 (0.1%, 76.3%)      2 (0.0%, 41.8%)  blake2::blake2b::VarBlake2b::compress
+     2840 (0.1%, 76.4%)      1 (0.0%, 41.8%)  <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::ResultFolder<T>>::fold_uint_expression_cases
+     2831 (0.1%, 76.5%)      3 (0.0%, 41.8%)  aho_corasick::automaton::try_find_fwd
+     2784 (0.1%, 76.6%)    696 (1.1%, 42.9%)  serde_cbor::de::Deserializer<R>::parse_array
+     2773 (0.1%, 76.7%)      4 (0.0%, 42.9%)  <zokrates_ast::common::error::_::<impl serde::de::Deserialize for zokrates_ast::common::error::RuntimeError>::deserialize::__Visitor as serde::de::Visitor>::visit_enum
+     2716 (0.1%, 76.7%)     14 (0.0%, 42.9%)  <zokrates_ast::zir::_::<impl serde::de::Deserialize for zokrates_ast::zir::IfElseStatement<T>>::deserialize::__Visitor<T> as serde::de::Visitor>::visit_seq
+     2688 (0.1%, 76.8%)     14 (0.0%, 42.9%)  <zokrates_ast::common::statements::_::<impl serde::de::Deserialize for zokrates_ast::common::statements::AssemblyConstraint<E>>::deserialize::__Visitor<E> as serde::de::Visitor>::visit_seq
+     2686 (0.1%, 76.9%)      1 (0.0%, 42.9%)  regex::re_bytes::Regex::find_at
+     2686 (0.1%, 77.0%)      1 (0.0%, 42.9%)  regex::re_unicode::Regex::find_at
+     2624 (0.1%, 77.1%)    187 (0.3%, 43.2%)  core::option::Option<T>::is_some
+     2592 (0.1%, 77.2%)      7 (0.0%, 43.2%)  <ark_ff::fields::models::Fp256<P> as ark_ff::fields::Field>::square_in_place
+     2556 (0.1%, 77.2%)    311 (0.5%, 43.7%)  <&T as core::fmt::Debug>::fmt
+     2532 (0.1%, 77.3%)      1 (0.0%, 43.7%)  <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::ResultFolder<T>>::fold_field_expression_cases

@@ -1,23 +1,24 @@
  File  .text    Size                Crate Name
- 0.2%   0.4% 23.3KiB   zokrates_analysis? <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::Result...
- 0.2%   0.3% 21.7KiB         zokrates_ast zokrates_ast::zir::result_folder::ResultFolder::fold_statement
- 0.2%   0.3% 19.9KiB zokrates_interpreter zokrates_interpreter::Interpreter::execute_with_log_stream
- 0.2%   0.3% 19.7KiB   zokrates_analysis? <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::Result...
- 0.2%   0.3% 16.7KiB   zokrates_analysis? <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::Result...
+ 0.2%   0.3% 21.8KiB   zokrates_analysis? <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::ResultFolder<T>>::fold_field_expression_cases
+ 0.2%   0.3% 20.6KiB         zokrates_ast zokrates_ast::zir::result_folder::ResultFolder::fold_statement
+ 0.2%   0.3% 19.6KiB   zokrates_analysis? <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::ResultFolder<T>>::fold_uint_expression_cases
+ 0.2%   0.3% 17.2KiB     webstream_applet webstream_applet::compute_witness
+ 0.2%   0.3% 16.4KiB   zokrates_analysis? <zokrates_analysis::zir_propagation::ZirPropagator<T> as zokrates_ast::zir::result_folder::ResultFolder<T>>::fold_boolean_expression_cases
  0.2%   0.2% 15.6KiB                  std std::backtrace_rs::symbolize::gimli::Context::new
- 0.1%   0.2% 14.4KiB     webstream_applet webstream_applet::witness
+ 0.1%   0.2% 14.6KiB          ark_groth16 ark_groth16::prover::create_proof
  0.1%   0.2% 13.9KiB                  std std::backtrace_rs::symbolize::gimli::resolve
+ 0.1%   0.2% 12.4KiB zokrates_interpreter zokrates_interpreter::Interpreter::execute_with_log_stream
  0.1%   0.2% 10.4KiB            addr2line addr2line::ResUnit<R>::find_function_or_location::{{closure}}
- 0.1%   0.2%  9.7KiB                gimli gimli::read::dwarf::Unit<R>::new
- 0.1%   0.1%  9.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.7KiB                gimli gimli::read::dwarf::Unit<R>::new
  0.1%   0.1%  9.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  9.5KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  9.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  9.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  9.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  9.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  9.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  9.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.2KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  9.2KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.7KiB          miniz_oxide miniz_oxide::inflate::core::decompress
  0.1%   0.1%  8.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
@@ -28,7 +29,8 @@
  0.1%   0.1%  8.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.5KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  8.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  8.4KiB            [Unknown] start
+ 0.1%   0.1%  8.1KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.1KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.1KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  8.1KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
@@ -59,11 +61,6 @@
  0.1%   0.1%  7.9KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.8KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.7KiB            addr2line addr2line::Lines::parse
  0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
@@ -71,6 +68,11 @@
  0.1%   0.1%  7.7KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
+ 0.1%   0.1%  7.6KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.4KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
@@ -97,7 +99,5 @@
  0.1%   0.1%  7.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
  0.1%   0.1%  7.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
- 0.1%   0.1%  7.3KiB           serde_cbor serde_cbor::de::Deserializer<R>::parse_value
-56.4%  86.3%  5.4MiB                      And 6762 smaller methods. Use -n N to show more.
-65.4% 100.0%  6.3MiB                      .text section size, the file size is 9.6MiB
+56.2%  86.5%  5.5MiB                      And 7131 smaller methods. Use -n N to show more.
+64.9% 100.0%  6.4MiB                      .text section size, the file size is 9.9MiB

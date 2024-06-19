@@ -40,7 +40,7 @@ check:
 # size debugging #
 ##################
 
-wasm/testing:
+wasm/time:
 	@CC=$(CC);\
 	cargo build --release --target=$(TARGET) --timings
 
@@ -59,4 +59,4 @@ twiggy/monos: wasm
 	twiggy monos target/wasm32-wasi/release/webstream_applet.wasm --max-generics 5 --max-monos 30
 
 lines:
-	cargo llvm-lines --target=wasm32-wasi --lib --release | head -n 10
+	cargo llvm-lines --target=wasm32-wasi --lib --release | head -n 100
