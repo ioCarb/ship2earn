@@ -47,32 +47,32 @@ pub fn witness(_: i32) -> i32 {
 
     let now = std::time::Instant::now();
     // TODO: look into saving pos instead of cloning whole cursor
-    let witness = match ProgEnum::deserialize(out_reader.clone()).unwrap() {
+    let witness = match ProgEnum::deserialize(out_reader).unwrap() {
         ProgEnum::Bn128Program(p) => compute_witness::<_, _, G16, Ark>(p),
         _ => unreachable!("no witness for curve"),
     }
     .unwrap();
     // log_info("computed witness").unwrap();
 
-    let pk_reader = match ProgEnum::deserialize(out_reader.clone()).unwrap() {
-        ProgEnum::Bn128Program(p) => compute_proving_key::<_, _, G16, Ark>(p),
-        _ => unreachable!("no proving.key for curve"),
-    }
-    .unwrap();
-    // log_info("computed pk").unwrap();
+    // let pk_reader = match ProgEnum::deserialize(out_reader.clone()).unwrap() {
+    //     ProgEnum::Bn128Program(p) => compute_proving_key::<_, _, G16, Ark>(p),
+    //     _ => unreachable!("no proving.key for curve"),
+    // }
+    // .unwrap();
+    // // log_info("computed pk").unwrap();
 
-    let proof = match ProgEnum::deserialize(out_reader).unwrap() {
-        ProgEnum::Bn128Program(p) => compute_proof::<_, _, G16, Ark>(p, pk_reader, witness),
-        _ => unreachable!("no proof for curve"),
-    }
-    .unwrap();
+    // let proof = match ProgEnum::deserialize(out_reader).unwrap() {
+    //     ProgEnum::Bn128Program(p) => compute_proof::<_, _, G16, Ark>(p, pk_reader, witness),
+    //     _ => unreachable!("no proof for curve"),
+    // }
+    // .unwrap();
 
     let elapsed = now.elapsed();
-    // print!("{:.2?}", elapsed);
+    print!("{:.2?}", elapsed);
     // print!("{}", proof.as_str());
 
-    log_info(&format!("{:.2?}", elapsed)).unwrap();
-    log_info(proof.as_str()).unwrap();
+    // log_info(&format!("{:.2?}", elapsed)).unwrap();
+    // log_info(proof.as_str()).unwrap();
 
     // log_info("end").unwrap();
     0
