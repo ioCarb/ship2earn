@@ -26,11 +26,11 @@ wasm:
 
 local:
 	@CC=$(CC);\
-	cargo build --target=$(TARGET) --timings
+	cargo build --release
 
 test: local
 	@RUST_BACKTRACE=1;\
-	cargo test test --lib -- --nocapture
+	cargo test --release test --lib -- --nocapture
 check:
 	@CC=$(CC);\
 	cargo check --release --target=$(TARGET)
