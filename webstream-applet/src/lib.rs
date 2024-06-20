@@ -11,7 +11,7 @@ use zokrates_field::Field;
 use zokrates_proof_systems::rng::get_rng_from_entropy;
 use zokrates_proof_systems::{Backend, NonUniversalBackend, Scheme, G16};
 
-#[cfg(target_arch = "wasm32-wasi")]
+#[cfg(target_arch = "wasm32")]
 use ws_sdk::log::log_info;
 
 #[derive(Embed)]
@@ -22,7 +22,7 @@ struct Inputs;
 // #[folder = "../../ZoKrates/zokrates_stdlib/stdlib/"]
 // struct Stdlib;
 
-#[cfg(not(target_arch = "wasm32-wasi"))]
+#[cfg(not(target_arch = "wasm32"))]
 fn log_info(str: &str) -> Result<()> {
     println!("{}", str);
     Ok(())
