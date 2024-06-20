@@ -11,7 +11,7 @@ use zokrates_field::Field;
 use zokrates_proof_systems::rng::get_rng_from_entropy;
 use zokrates_proof_systems::{Backend, NonUniversalBackend, Scheme, G16};
 
-#[cfg(not(debug_assertions))]
+#[cfg(target_arch = "wasm32-wasi")]
 use ws_sdk::log::log_info;
 
 #[derive(Embed)]
@@ -22,7 +22,7 @@ struct Inputs;
 // #[folder = "../../ZoKrates/zokrates_stdlib/stdlib/"]
 // struct Stdlib;
 
-#[cfg(debug_assertions)]
+#[cfg(not(target_arch = "wasm32-wasi"))]
 fn log_info(str: &str) -> Result<()> {
     println!("{}", str);
     Ok(())
@@ -46,32 +46,37 @@ pub fn witness(_: i32) -> i32 {
     // let pk_reader = Cursor::new(proving_key.data.into_owned());
 
     let now = std::time::Instant::now();
+
     // TODO: look into saving pos instead of cloning whole cursor
-    let witness = match ProgEnum::deserialize(out_reader).unwrap() {
+    let witness = match ProgEnum::deserialize(out_reader.clone()).unwrap() {
         ProgEnum::Bn128Program(p) => compute_witness::<_, _, G16, Ark>(p),
         _ => unreachable!("no witness for curve"),
     }
     .unwrap();
     // log_info("computed witness").unwrap();
 
-    // let pk_reader = match ProgEnum::deserialize(out_reader.clone()).unwrap() {
-    //     ProgEnum::Bn128Program(p) => compute_proving_key::<_, _, G16, Ark>(p),
-    //     _ => unreachable!("no proving.key for curve"),
-    // }
-    // .unwrap();
-    // // log_info("computed pk").unwrap();
+    let elapsed_witness = now.elapsed();
 
-    // let proof = match ProgEnum::deserialize(out_reader).unwrap() {
-    //     ProgEnum::Bn128Program(p) => compute_proof::<_, _, G16, Ark>(p, pk_reader, witness),
-    //     _ => unreachable!("no proof for curve"),
-    // }
-    // .unwrap();
+    let pk_reader = match ProgEnum::deserialize(out_reader.clone()).unwrap() {
+        ProgEnum::Bn128Program(p) => compute_proving_key::<_, _, G16, Ark>(p),
+        _ => unreachable!("no proving.key for curve"),
+    }
+    .unwrap();
+    // log_info("computed pk").unwrap();
 
-    let elapsed = now.elapsed();
-    print!("{:.2?}", elapsed);
-    // print!("{}", proof.as_str());
+    let now = std::time::Instant::now();
 
-    // log_info(&format!("{:.2?}", elapsed)).unwrap();
+    let proof = match ProgEnum::deserialize(out_reader).unwrap() {
+        ProgEnum::Bn128Program(p) => compute_proof::<_, _, G16, Ark>(p, pk_reader, witness),
+        _ => unreachable!("no proof for curve"),
+    }
+    .unwrap();
+
+    let elapsed_proof = now.elapsed();
+
+    let elapsed = elapsed_witness + elapsed_proof;
+
+    log_info(&format!("{:.2?}", elapsed)).unwrap();
     // log_info(proof.as_str()).unwrap();
 
     // log_info("end").unwrap();
@@ -142,7 +147,7 @@ fn compute_proving_key<
     // TODO: share entropy maybe
     let mut rng = StdRng::from_entropy();
     let keypair = B::setup(ir_prog, &mut rng);
-    let mut pk_reader = Cursor::new(keypair.pk.to_owned());
+    let pk_reader = Cursor::new(keypair.pk.to_owned());
 
     Ok(pk_reader)
 }

@@ -594,7 +594,7 @@ checksum = "ef2b4b23cddf68b89b8f8069890e8c270d54e2d5fe1b143820234805e4cb17ef"
 dependencies = [
  "generic-array 0.14.7",
  "rand_core",
- "subtle 2.5.0",
+ "subtle 2.6.0",
  "zeroize",
 ]
 
@@ -606,7 +606,7 @@ checksum = "0dc92fb57ca44df6db8059111ab3af99a63d5d0f8375d9972e319a379c6bab76"
 dependencies = [
  "generic-array 0.14.7",
  "rand_core",
- "subtle 2.5.0",
+ "subtle 2.6.0",
  "zeroize",
 ]
 
@@ -637,7 +637,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b584a330336237c1eecd3e94266efb216c56ed91225d634cb2991c5f3fd1aeab"
 dependencies = [
  "generic-array 0.14.7",
- "subtle 2.5.0",
+ "subtle 2.6.0",
 ]
 
 [[package]]
@@ -743,7 +743,7 @@ dependencies = [
  "block-buffer 0.10.4",
  "const-oid",
  "crypto-common",
- "subtle 2.5.0",
+ "subtle 2.6.0",
 ]
 
 [[package]]
@@ -793,7 +793,7 @@ dependencies = [
  "rand_core",
  "sec1 0.3.0",
  "serdect",
- "subtle 2.5.0",
+ "subtle 2.6.0",
  "zeroize",
 ]
 
@@ -809,7 +809,7 @@ dependencies = [
  "generic-array 0.14.7",
  "rand_core",
  "sec1 0.7.3",
- "subtle 2.5.0",
+ "subtle 2.6.0",
  "zeroize",
 ]
 
@@ -908,7 +908,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d013fc25338cc558c5c2cfbad646908fb23591e2404481826742b651c9af7160"
 dependencies = [
  "rand_core",
- "subtle 2.5.0",
+ "subtle 2.6.0",
 ]
 
 [[package]]
@@ -990,7 +990,7 @@ checksum = "5dfbfb3a6cfbd390d5c9564ab283a0349b9b9fcd46a706c1eb10e0db70bfbac7"
 dependencies = [
  "ff",
  "rand_core",
- "subtle 2.5.0",
+ "subtle 2.6.0",
 ]
 
 [[package]]
@@ -1742,7 +1742,7 @@ dependencies = [
  "generic-array 0.14.7",
  "pkcs8",
  "serdect",
- "subtle 2.5.0",
+ "subtle 2.6.0",
  "zeroize",
 ]
 
@@ -1755,7 +1755,7 @@ dependencies = [
  "base16ct 0.2.0",
  "der 0.7.9",
  "generic-array 0.14.7",
- "subtle 2.5.0",
+ "subtle 2.6.0",
  "zeroize",
 ]
 
@@ -1972,9 +1972,9 @@ checksum = "2d67a5a62ba6e01cb2192ff309324cb4875d0c451d55fe2319433abe7a05a8ee"
 
 [[package]]
 name = "subtle"
-version = "2.5.0"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81cdd64d312baedb58e21336b31bc043b77e01cc99033ce76ef539f78e965ebc"
+checksum = "0d0208408ba0c3df17ed26eb06992cb1a1268d41b2c0e12e65203fbe3972cee5"
 
 [[package]]
 name = "syn"
