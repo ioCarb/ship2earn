@@ -11,7 +11,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
  * done: add set functions for registration
  * done: add set functions for binding
  * done: add transfer function for binding
- * todo: add getter functions for w3bstream
+ * TODO: add getter functions for w3bstream
  * todo: add events for w3bstream
  * todo: add vehicle struct functions
  * todo: 
