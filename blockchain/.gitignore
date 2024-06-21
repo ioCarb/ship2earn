@@ -1,5 +1,6 @@
 # manually added
 .notes.txt
+.vscode
 
 # automatically added
 node_modules

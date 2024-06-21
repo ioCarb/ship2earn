@@ -4,7 +4,8 @@ pragma solidity ^0.8.24;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title PebbleBinding
- * @dev Contract to bind a Pebble to a wallet address (company)
+ * @dev Contract to bind a Pebble to a wallet address (ioCarb)
+ * note: only current owner can transfer the ownership of a pebble to another address
  * Done: get function for w3bstream node to call to update DB -> getPebbles
  */
 
@@ -17,8 +18,8 @@ contract PebbleBinding is AccessControl {
     }
 
     // Mapping from device ID to Device struct
-    mapping(string => Binding) public bindings;
-    string[] public Binding_bindings;
+    mapping(string => Binding) private bindings;
+    string[] private Binding_bindings;
 
     // Constructor to set the admin address
     constructor() {

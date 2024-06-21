@@ -6,6 +6,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title PebbleRegistration
  * @dev Contract to register a Pebble to a vehicle
+ * note: only admin can register a pebble to a vehicle and also change the vehicle later
  * Done: add set functions for vehicles -> addVehicle
  * Done: add get functions for vehicles -> getPebble
  */
@@ -20,7 +21,7 @@ contract PebbleRegistration is AccessControl {
     }
 
     // Mapping from device ID to Device struct
-    mapping(string => Pebble) public pebbles;
+    mapping(string => Pebble) private pebbles;
 
     struct Vehicle {
         string vehicleId;
@@ -28,7 +29,7 @@ contract PebbleRegistration is AccessControl {
         uint256 avgEmissions;
     }
 
-    mapping(string => Vehicle) public vehicles;
+    mapping(string => Vehicle) private vehicles;
 
     // Constructor to set the admin address
     constructor() {
@@ -44,11 +45,7 @@ contract PebbleRegistration is AccessControl {
     }
 
     // Event for device registration
-    event PebbleRegistered(
-        string pebbleId,
-        string vehicleId,
-        bool isRegistered
-    );
+    event PebbleRegistered(string pebbleId, string vehicleId, bool isRegistered);
 
     // Function to get the vehicle ID for a given pebble ID
     function getPebble(
