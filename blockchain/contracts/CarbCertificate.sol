@@ -5,13 +5,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
- * @title AllowanceCertificate
+ * @title CarbCertificate
  * @dev ERC721 token contract for carbon certificates
  * TODO: 
  * TODO: 
  */
 
-contract AllowanceCertificate is ERC721, AccessControl {
+contract CarbCertificate is ERC721, AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     // Mapping from token ID to IPFS CID
@@ -20,7 +20,7 @@ contract AllowanceCertificate is ERC721, AccessControl {
     // Base URI for constructing token URIs
     string private _baseTokenURI;
 
-    constructor(string memory baseTokenURI) ERC721("MyIPFSNFT", "MIPFS") {
+    constructor(string memory baseTokenURI) ERC721("CarbCert", "CRBC") {
         _baseTokenURI = baseTokenURI;
         _grantRole(ADMIN_ROLE, msg.sender);
     }

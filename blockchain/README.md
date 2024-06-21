@@ -14,8 +14,9 @@
 - companies can use the contract to burn CRB tokens and reduce their emitted CO2 using the function <burnTokens>
 - in each case if the emitted CO2 falls below the allowance, the contract invokes the minting process
 #### CarbToken.sol
-- mints tokens
-#### AllowanceCertificate.sol
+- mint and burn tokens
+- trading functionalities to be added
+#### CarbCertificate.sol
 - 
 
 ## Initial Setup 
@@ -30,19 +31,25 @@ npm install
 - adjust number of accounts you want to have access to and use as signers
 #### .env
 - set your: 
+```
 PRIVATE_KEY_ADMIN="..."
 ADDRESS_ADMIN="0x..."
+```
 - for script usage also 
     - set the keys and addresses for the desired number of companies you want to test for as:
+    ```
     PRIVATE_KEY_COMPANY_A="..."
     ADDRESS_COMPANY_A="0x..."
     PRIVATE_KEY_COMPANY_B="..."
     ADDRESS_COMPANY_C="0x..."
     ...
+    ```
     - set the addresses of the deployed smart contracts as:
+    ```
     RANKING_CONTRACT_ADDRESS="0x..."
     MINTING_CONTRACT_ADDRESS="0x..."
     VERIFIER_CONTRACT_ADDRESS="0x..."
+    ```
 
 ### Scripts 
 (When working with hardhat. Deplyoment and interactions can also be done as per individual preference using other methods.)
@@ -77,11 +84,11 @@ At the current stage the address that deploys the contracts has an ADMIN_ROLE an
 #### Verifier.sol
 - AccessControl to be implemented
 #### RankingContract.sol
-- invoke function setRankingRole(address _rankingRole) with address of deployed Verifier contract
+- invoke function ```setRankingRole(address _rankingRole)``` with address of deployed Verifier contract
 -> grants the given address the RANKING_ROLE which is allowed to call the function receiveData(...)
 -> should only be granted to the Verifier contract
 #### MintingContract.sol
-- invoke function setMinter(address _minter) with address of deployed RankingContract contract
+- invoke function ```setMinter(address _minter)``` with address of deployed RankingContract contract
 -> grants the given address the MINTER_ROLE which is allowed to mint tokens
 CertificateContract.sol
 - 
