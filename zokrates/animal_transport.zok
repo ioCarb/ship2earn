@@ -1,0 +1,29 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+
+
+def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,field[300] temp, field[300] hum,field[300] speed) -> field {
+    BabyJubJubParams context = context();
+	assert(verifyEddsa(R, S, A, M0, M1, context));
+    log("signature {} is verified",S);
+    u32 n = 300;
+    u32 mut score = 0;
+    field mut sum_temp = 0;
+    field mut sum_hum = 0;
+    bool mut is_safe = false;
+    for u32 i in 0..n {
+       sum_temp = sum_temp * temp[i];
+       sum_hum = sum_hum * hum[i];
+       is_safe = speed <= 130;
+    }
+    field avg_temp = sum_temp/n;
+    field avg_hum = sum_hum/n;
+    score = if avg_temp > 5 && avg_temp < 30 {score +1} else {score} ;
+    score = if avg_hum > 5 && avg_hum < 30 {score +1} else {score};
+    score = if  is_safe  {score +1} else {score};
+
+    log("score is {}", score);
+    return score;
+}
+

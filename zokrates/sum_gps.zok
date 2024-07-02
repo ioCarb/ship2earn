@@ -1,0 +1,32 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+
+def distance(field[2] pt1, field[2] pt2) -> field {
+    field latitude1 = pt1[0];
+    field longitude1 = pt1[1];
+    field latitude2 = pt2[0];
+    field longitude2 = pt2[1];
+
+    field diff_latitude = latitude2 - latitude1;
+    field diff_longitude = longitude2 - longitude1;
+    field km = diff_latitude + diff_longitude;
+
+    return km;
+}
+
+def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,field[1500] lat, field[1500] long,field typ) -> field {
+    BabyJubJubParams context = context();
+	assert(verifyEddsa(R, S, A, M0, M1, context));
+    log("signature {} is verified",S);
+    field mut sum = 0;
+    for u32 i in 0..1498 {
+       field distance = distance([lat[i],lat[i+1]],[long[i],long[i+1]]);
+       sum = sum + distance;
+    }
+    field result = sum*typ;
+    log("sum is {}", result);
+    log("factor is {}", typ);
+    return result;
+}
+
