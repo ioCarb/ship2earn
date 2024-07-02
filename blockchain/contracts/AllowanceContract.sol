@@ -16,7 +16,9 @@ interface ICertContract {
 /**
  * @title AllowanceContract
  * @dev Contract to verify and store achieved CO2 savings
- * TODO: Implement burn function to burn tokens, reduce trackedCO2, and check allowance
+ * TODO: 
+ * TODO: implement timelock for emissionReport function to prevent multiple calls for same company
+ * done: Implement burn function to burn tokens, reduce trackedCO2, and check allowance
  */
 
 contract AllowanceContract is AccessControl {
@@ -27,7 +29,7 @@ contract AllowanceContract is AccessControl {
     // necessary company data to calculate ranking and savings, stored to process after final reporting
     struct Company {
         uint256 allowance;  // CO2 allowance for the company
-        uint256 trackedCO2; // CO2 emissions recorded by the company     
+        uint256 trackedCO2; // CO2 emissions recorded by the company  
     }
     mapping(address => Company) public companies;
     address[] public companyAddresses; // wallet addresses of companies, sorted by normalizedGR during initial data reporting
@@ -89,17 +91,36 @@ contract AllowanceContract is AccessControl {
     function emissionReport(address _company, uint256 _trackedCO2) public onlyRole(VERIFIER_ROLE) {
         companies[_company].trackedCO2 = _trackedCO2;
         if (companies[_company].trackedCO2 == companies[_company].allowance) {
-            certContract.mint(_company, "allowance", 0);
+            // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
             emit successfullEmissionReport(_company, 0);
         } else if (companies[_company].trackedCO2 < companies[_company].allowance) {
             uint256 savings = companies[_company].allowance - companies[_company].trackedCO2;
-            certContract.mint(_company, "allowance", 0);
-            emit successfullEmissionReport(_company, savings);
+            // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
             tokenContract.mint(_company, savings);            // mint tokens corresponding to negative CO2 surplus
             companies[_company].trackedCO2 = companies[_company].allowance;
+            emit successfullEmissionReport(_company, savings);
         } else {
             uint256 excess = companies[_company].trackedCO2 - companies[_company].allowance;
             emit failedEmissionReport(_company, excess);
+        }
+    }
+
+    // burns tokens to offset excess CO2 emissions
+    function offsetExcess() public {
+        address _company = msg.sender;
+        uint256 _excess = companies[_company].trackedCO2 - companies[_company].allowance;
+        if (_excess == 0) {
+            revert("No excess to offset");
+        } else {
+            uint256 _amount = tokenContract.getTokens(_company);
+            if (_amount >= _excess) {
+                tokenContract.burn(_company, _excess);
+                companies[_company].trackedCO2 = companies[_company].allowance;
+                // certContract.mint(_company, "allowance", 0); --> CertContract not ready yet
+                emit successfullEmissionReport(_company, 0);
+            } else {
+                revert("Insufficient tokens to offset excess");
+            }
         }
     }
 
@@ -109,17 +130,11 @@ contract AllowanceContract is AccessControl {
         if (_amount == 0) {
             _amount = tokenContract.getTokens(_company);
         }
-        if (companies[_company].trackedCO2 == companies[_company].allowance) {
+        if ((_amount > 0) && (companies[_company].trackedCO2 == companies[_company].allowance)) {
             tokenContract.burn(_company, _amount);
             //event
-        } else if ((companies[_company].trackedCO2 > companies[_company].allowance) && 
-        (_amount >= (companies[_company].trackedCO2 - companies[_company].allowance))) {
-            uint256 _excess = companies[_company].trackedCO2 - companies[_company].allowance;
-            certContract.mint(_company, "allowance", 0);
-            emit successfullEmissionReport(_company, 0);
-            tokenContract.burn(_company, _amount-_excess);
         } else {
-            revert("Insufficient tokens to burn");
+            revert("No tokens to burn or still excess CO2 emissions to offset");
         }   
     }
 }

@@ -15,7 +15,8 @@
 - in each case if the emitted CO2 falls below the allowance, the contract invokes the minting process
 #### CarbToken.sol
 - mint and burn tokens
-- trading functionalities to be added
+#### CRBTokenExchange.sol
+- trading functionalities between IOTX and CRB
 #### CarbCertificate.sol
 - 
 
@@ -83,10 +84,6 @@ A role based access control is implemented to ensure the security in between con
 At the current stage the address that deploys the contracts has an ADMIN_ROLE and can invoke the functions to grant other roles.
 #### Verifier.sol
 - AccessControl to be implemented
-#### RankingContract.sol
-- invoke function ```setRankingRole(address _rankingRole)``` with address of deployed Verifier contract
--> grants the given address the RANKING_ROLE which is allowed to call the function receiveData(...)
--> should only be granted to the Verifier contract
 #### MintingContract.sol
 - invoke function ```setMinter(address _minter)``` with address of deployed RankingContract contract
 -> grants the given address the MINTER_ROLE which is allowed to mint tokens

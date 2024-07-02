@@ -1,6 +1,7 @@
 # manually added
 .notes.txt
 .vscode
+zokrates/
 
 # automatically added
 node_modules
