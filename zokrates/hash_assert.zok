@@ -1,0 +1,58 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+
+// Function to convert bytes to a spaced byte array
+def bytes_to_spaced_bytes(bytes: field[744]) -> field[1487] {
+    // 744 bytes + 743 spaces = 1487 total elements
+    result: field[1487]
+    
+    for i in 0..744 {
+        // Copy the byte to the result array
+        result[2 * i] = bytes[i]
+        // Insert space (0x20) after each byte, except the last one
+        if i < 743 {
+            result[2 * i + 1] = 32  // ASCII code for space
+        }
+    }
+    
+    return result
+}
+
+// Function to split the hash into 4 parts
+def split_hash(hash: field[8]) -> (field[2], field[2], field[2], field[2]) {
+    part1: field[2] = [hash[0], hash[1]]
+    part2: field[2] = [hash[2], hash[3]]
+    part3: field[2] = [hash[4], hash[5]]
+    part4: field[2] = [hash[6], hash[7]]
+    return (part1, part2, part3, part4)
+}
+
+// Main function
+def main(private field[2] R, private field S, field[2] A, u32[8] M0, u32[8] M1,field[744] input ) -> bool {
+    BabyJubJubParams context = context();
+	assert(verifyEddsa(R, S, A, M0, M1, context));
+    log("signature {} is verified",S);
+    // Step 1: Convert bytes to spaced byte array
+    spaced_bytes = bytes_to_spaced_bytes(input_bytes)
+    log("spaced bytes : {}",spaced_bytes)
+    // Step 2: Hash the concatenated byte array
+    concatenated_hash = sha256(spaced_bytes)
+    log("hash : {}",spaced_bytes) 
+    // Step 3: Split the hash into 4 parts
+    part1, part2, part3, part4 = split_hash(concatenated_hash)
+    
+    // Step 4: Compare the hash parts with the given hash
+    given_part1, given_part2, given_part3, given_part4 = split_hash(given_hash)
+    
+    return (part1 == given_part1) && (part2 == given_part2) && (part3 == given_part3) && (part4 == given_part4)
+}
+
+def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,private field[144] temperature,private field[144] humidity,private field[144] speed,private field[144] acceleration,private bool[144] hasmoved) -> u32 {
+    
+    BabyJubJubParams context = context();
+	assert(verifyEddsa(R, S, A, M0, M1, context));
+    log("signature {} is verified",S);
+    
+    return score;
+}
