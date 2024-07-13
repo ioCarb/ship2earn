@@ -13,11 +13,15 @@ interface ICertContract {
     function mint(address to, string memory cert_type, uint amount) external;
 }
 
+interface IDeviceRegistry {
+    function getDeviceWallet(uint256 _deviceID) external returns (address);
+}
+
 /**
  * @title AllowanceContract
  * @dev Contract to verify and store achieved CO2 savings
  * TODO: 
- * TODO: implement timelock for emissionReport function to prevent multiple calls for same company
+ * TODO: 
  * done: Implement burn function to burn tokens, reduce trackedCO2, and check allowance
  */
 
@@ -28,14 +32,17 @@ contract AllowanceContract is AccessControl {
 
     // necessary company data to calculate ranking and savings, stored to process after final reporting
     struct Company {
-        uint256 allowance;  // CO2 allowance for the company
-        uint256 trackedCO2; // CO2 emissions recorded by the company  
+        uint256 allowance;          // CO2 allowance for the company
+        uint256 trackedCO2;         // CO2 emissions recorded by the company  
+        uint32 num_vehicles;        // number of vehicles in the company
+        uint32 vehicles_tracked;    // number of vehicles with CO2 data
     }
     mapping(address => Company) public companies;
     address[] public companyAddresses; // wallet addresses of companies, sorted by normalizedGR during initial data reporting
 
     ITokenContract private tokenContract;
     ICertContract private certContract;
+    IDeviceRegistry private deviceRegistry;
 
     constructor() {
         _grantRole(ADMIN_ROLE, msg.sender);
@@ -46,8 +53,8 @@ contract AllowanceContract is AccessControl {
     event operatorRoleSet(address operator); // emitted when operator role is set -> emits address of operator
     event tokenContractSet(address tokenContract); // emitted when minting contract is set -> emits address of minting contract
     event certContractSet(address certContract); // emitted when certificate contract is set -> emits address of certificate contract
-    event failedEmissionReport(address company, uint256 excess); // emitted when company exceeds allowance during initial reporting
-    event successfullEmissionReport(address company, uint256 savings); // emitted when company meets or is below allowance during initial reporting
+    event EmissionReportReceived(address company, uint256 excess, bool achieved); // emitted when companys allowance is checked 
+    event CompanyDataReady(address company, bool ready); // emitted when all vehicles of a company have reported their CO2 emissions
 
     // sets the verifier role to the address of the verifier contract
     function setVerifierRole(address _verifier) public onlyRole(ADMIN_ROLE) {
@@ -77,7 +84,9 @@ contract AllowanceContract is AccessControl {
     function addCompany(address _company, uint256 _allowance) public onlyRole(OPERATOR_ROLE) {
         companies[_company] = Company({
             allowance: _allowance,
-            trackedCO2: 0
+            trackedCO2: 0,
+            num_vehicles: 0,
+            vehicles_tracked: 0
         });
         companyAddresses.push(_company);
     }
@@ -87,22 +96,46 @@ contract AllowanceContract is AccessControl {
         companies[_company].allowance = _newAllowance;
     }
 
+    // increases the number of vehicles of a company
+    function increaseVehicleCount(address _company) public onlyRole(OPERATOR_ROLE) {
+        companies[_company].num_vehicles += 1;
+    }
+
+    // decreases the number of vehicles of a company
+    function decreaseVehicleCount(address _company) public onlyRole(OPERATOR_ROLE) {
+        companies[_company].num_vehicles -= 1;
+    }
+
     // called by Verifier Contract if proof is valid
-    function emissionReport(address _company, uint256 _trackedCO2) public onlyRole(VERIFIER_ROLE) {
-        companies[_company].trackedCO2 = _trackedCO2;
+    function emissionReport(uint256 _vehicleID, address _company, uint256 _trackedCO2) public onlyRole(VERIFIER_ROLE) {
+        require(deviceRegistry.getDeviceWallet(_vehicleID) == _company, "Vehicle not registered to company");
+        companies[_company].trackedCO2 += _trackedCO2;
+        companies[_company].vehicles_tracked += 1;
+        emit CompanyDataReady(_company, false);
+        if (companies[_company].vehicles_tracked == companies[_company].num_vehicles) {
+            emit CompanyDataReady(_company, true);
+        }
+    }
+
+    function checkAllowance(address _company) public onlyRole(OPERATOR_ROLE) {
         if (companies[_company].trackedCO2 == companies[_company].allowance) {
             // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
-            emit successfullEmissionReport(_company, 0);
+            emit EmissionReportReceived(_company, 0, true);
         } else if (companies[_company].trackedCO2 < companies[_company].allowance) {
             uint256 savings = companies[_company].allowance - companies[_company].trackedCO2;
             // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
             tokenContract.mint(_company, savings);            // mint tokens corresponding to negative CO2 surplus
             companies[_company].trackedCO2 = companies[_company].allowance;
-            emit successfullEmissionReport(_company, savings);
+            emit EmissionReportReceived(_company, savings, true);
         } else {
             uint256 excess = companies[_company].trackedCO2 - companies[_company].allowance;
-            emit failedEmissionReport(_company, excess);
+            emit EmissionReportReceived(_company, excess, false);
         }
+    }
+
+    function resetCompanyData(address _company) public onlyRole(OPERATOR_ROLE) {
+        companies[_company].trackedCO2 = 0;
+        companies[_company].vehicles_tracked = 0;
     }
 
     // burns tokens to offset excess CO2 emissions
@@ -117,7 +150,7 @@ contract AllowanceContract is AccessControl {
                 tokenContract.burn(_company, _excess);
                 companies[_company].trackedCO2 = companies[_company].allowance;
                 // certContract.mint(_company, "allowance", 0); --> CertContract not ready yet
-                emit successfullEmissionReport(_company, 0);
+                emit EmissionReportReceived(_company, 0, true);
             } else {
                 revert("Insufficient tokens to offset excess");
             }

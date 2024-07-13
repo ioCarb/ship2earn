@@ -1,17 +1,9 @@
+require('dotenv').config();
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-const VerifierModule = buildModule("VerifierModule", (m) => {
-  // To use a library, you first deploy it with `m.library`
-  const library = m.library("BN256G2");
+const admin = process.env.ADDRESS_ADMIN;
 
-  // We then pass it as an option to `m.contract`
-  const verifier = m.contract("Verifier", [], {
-    libraries: { BN256G2: library },
-  });
-
-  return {
-    verifier,
-  };
+module.exports = buildModule("VerifierModule", (m) => {
+    const verifier = m.contract("Verifier", [process.env.CARBTOKEN_ADDRESS]);
+    return { verifier };
 });
-
-module.exports = VerifierModule;

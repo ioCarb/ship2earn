@@ -30,14 +30,14 @@ contract CarbToken is ERC20, AccessControl	{
     event burned(address from, uint256 amount);
     
 
-    function setMinter(address _minter) public onlyRole(ADMIN_ROLE) {
-        _grantRole(MINTER_ROLE, _minter);
-        emit minterRoleSet(_minter);
+    function setMinter(address _minterAddress) public onlyRole(ADMIN_ROLE) {
+        _grantRole(MINTER_ROLE, _minterAddress);
+        emit minterRoleSet(_minterAddress);
     }
 
-    function setBurner(address _burner) public onlyRole(ADMIN_ROLE) {
-        _grantRole(BURNER_ROLE, _burner);
-        emit burnerRoleSet(_burner);
+    function setBurner(address _burnerAddress) public onlyRole(ADMIN_ROLE) {
+        _grantRole(BURNER_ROLE, _burnerAddress);
+        emit burnerRoleSet(_burnerAddress);
     }
 
     function mint(address _to, uint256 _amount) public onlyRole(MINTER_ROLE) {

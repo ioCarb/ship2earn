@@ -13,6 +13,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract CarbCertificate is ERC721, AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     // Mapping from token ID to IPFS CID
     mapping(uint256 => string) private _tokenCIDs;

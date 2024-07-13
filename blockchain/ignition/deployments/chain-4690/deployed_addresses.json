@@ -1,0 +1,12 @@
+{
+  "VerifierModule#Verifier": "0x9e06244ae32D0091d207a49C61BA1C28BC509eF9",
+  "DeviceRegistryModule#DeviceRegistry": "0x070fF0C1A859b28553681A09ff195a969E13747E",
+  "AllowanceContractModule#AllowanceContract": "0x360535b32144ab3E92A274652058E98fCAB22D12",
+  "CarbTokenModule#CarbToken": "0xb0d538584F906d30c17C407e63CB8C84ddE97903",
+  "CRBTokenExchangeModule#CRBTokenExchange": "0xEDb6fD66dCE1dEe9dE96ACC9a31b0CB64A17df4e",
+  "FirstPartModule#AllowanceContract": "0x52411002Df7049BA2695949235a8357f79A0704c",
+  "FirstPartModule#CarbToken": "0xcBA33A4E12f7EC1B197E4B819CB3dd91e22d2574",
+  "FirstPartModule#DeviceRegistry": "0xb6c6CC8826b695F404aa08399bFFccdAfb9A69d6",
+  "SecondPartModule#CRBTokenExchange": "0x4eEFEE0D9791279A7288E5AD0EE3A05D4181301f",
+  "SecondPartModule#Verifier": "0xd207e630ec63c2959CCC230336cbF90458d1bb3B"
+}
