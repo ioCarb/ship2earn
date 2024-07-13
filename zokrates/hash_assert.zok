@@ -1,58 +1,79 @@
-from "ecc/babyjubjubParams" import BabyJubJubParams;
-import "signatures/verifyEddsa.zok" as verifyEddsa;
-import "ecc/babyjubjubParams.zok" as context;
 
-// Function to convert bytes to a spaced byte array
-def bytes_to_spaced_bytes(bytes: field[744]) -> field[1487] {
-    // 744 bytes + 743 spaces = 1487 total elements
-    result: field[1487]
-    
-    for i in 0..744 {
-        // Copy the byte to the result array
-        result[2 * i] = bytes[i]
-        // Insert space (0x20) after each byte, except the last one
-        if i < 743 {
-            result[2 * i + 1] = 32  // ASCII code for space
-        }
+import "utils/casts/u32_to_field" as u32_to_field;
+import "utils/pack/u32/unpack128" as unpack128;
+import "hashes/sha256/512bitPacked" as sha256packed;
+import "utils/casts/bool_128_to_u32_4" as bool_128_to_u32_4;
+import "hashes/sha256/512bitPadded" as sha256padded;
+import "hashes/sha256/sha256" as sha256;
+
+
+
+def split_digits(u32 number)-> u32[2] {
+    return [number/10,number%10];
+}
+def utf_encode(u32[2] number)->u32[2]{
+    u32[2] mut result = [0,0];
+    for u32 i in 0..2{
+        result[i] = number[i]+30; 
     }
+    return result;
+}
+def concat( field a,u32 b)->field{
     
-    return result
+    field b_field = u32_to_field(b);
+
+    return a*100+b_field;
 }
 
-// Function to split the hash into 4 parts
-def split_hash(hash: field[8]) -> (field[2], field[2], field[2], field[2]) {
-    part1: field[2] = [hash[0], hash[1]]
-    part2: field[2] = [hash[2], hash[3]]
-    part3: field[2] = [hash[4], hash[5]]
-    part4: field[2] = [hash[6], hash[7]]
-    return (part1, part2, part3, part4)
+def getbytes(u32[10] numbers)->field{
+    u32 n = 10;
+    u32[2] mut digits = [0,0];
+    field mut result = 0;
+    for u32 i in 0..n{
+       digits = split_digits(numbers[i]);
+       digits = utf_encode(digits);
+       result = concat(result,digits[0]);
+       result = concat(result,digits[1]);
+       result = if(i<n-1) {concat(result,20)} else {result};
+    }
+    return result;
 }
 
-// Main function
-def main(private field[2] R, private field S, field[2] A, u32[8] M0, u32[8] M1,field[744] input ) -> bool {
-    BabyJubJubParams context = context();
-	assert(verifyEddsa(R, S, A, M0, M1, context));
-    log("signature {} is verified",S);
-    // Step 1: Convert bytes to spaced byte array
-    spaced_bytes = bytes_to_spaced_bytes(input_bytes)
-    log("spaced bytes : {}",spaced_bytes)
-    // Step 2: Hash the concatenated byte array
-    concatenated_hash = sha256(spaced_bytes)
-    log("hash : {}",spaced_bytes) 
-    // Step 3: Split the hash into 4 parts
-    part1, part2, part3, part4 = split_hash(concatenated_hash)
-    
-    // Step 4: Compare the hash parts with the given hash
-    given_part1, given_part2, given_part3, given_part4 = split_hash(given_hash)
-    
-    return (part1 == given_part1) && (part2 == given_part2) && (part3 == given_part3) && (part4 == given_part4)
+def main(u32[10] input ) -> bool {
+    field bytes = getbytes(input);
+    log("bytes {}",bytes);
+    field[2] hash = sha256packed([0,0,0,5]);
+    log("unpacked input {}",[unpack128(0),unpack128(0),unpack128(0),unpack128(5)]);
+    log("packedhash {}",[unpack128(hash[0]),unpack128(hash[1])]);
+    log("padded hash {}",sha256padded([...unpack128(0),...unpack128(0)],[...unpack128(0),...unpack128(5)]));
+    log("sha256 hash {}",sha256([[...unpack128(0),...unpack128(0),...unpack128(0),...unpack128(5)]]));
+return true;
+}
+/* [[00000000000000000000000000100010][00000000000000000000000000100000]]
+[1100011001001000000111100010001011000101111111110100000101100100101011110110100000001011100011001111101010100101111010001110110100110001001000001110111011111111100010011100010011110011000001111100010010100110111110101010101011100000010110011100111000010000]
+// Convert a u32 to its binary representation
+def u32_to_bits(u32 n) -> bool[32] {
+    bool[32] mut bits = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+    for u32 i in 0..32 {
+        bits[i] = (n & (1 << (31 - i))) != 0;
+    }
+    return bits;
 }
 
-def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,private field[144] temperature,private field[144] humidity,private field[144] speed,private field[144] acceleration,private bool[144] hasmoved) -> u32 {
-    
-    BabyJubJubParams context = context();
-	assert(verifyEddsa(R, S, A, M0, M1, context));
-    log("signature {} is verified",S);
-    
-    return score;
+// Concatenate two binary representations
+def concatenate_bits(bool[32] bits1, bool[32] bits2) -> bool[64] {
+    bool[64] mut result = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+    for u32 i in 0..32 {
+        result[i] = bits1[i];
+        result[32 + i] = bits2[i];
+    }
+    return result;
 }
+// Convert a binary representation to a field
+def bits_to_field(bool[64] bits) -> field {
+     field mut result = 0;
+    for u32 i in 0..64 {
+       result = if bits[i] {result + (1 << (63 - i))} else {result};
+    }
+    return result;
+} */
