@@ -63,16 +63,23 @@ async function getOffersCount(exchangeAddress, signers) {
     console.log(`Total number of active offers: ${count}`);
 }
 
+async function balanceOf(CarbTokenAddress, wallet, signers) {
+    const CarbToken = await ethers.getContractAt("CarbToken", CarbTokenAddress, signers[0]);
+    const balance = await CarbToken.balanceOf(wallet);
+    console.log(`Balance of ${wallet}: ${balance}`);
+}
+
 async function main() {
     const signers = await ethers.getSigners();
     const exchangeAddress = process.env.CRBTOKENEXCHANGE_ADDRESS;
-    
+    const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
     // Example usage:
     // await createBuyOffer(exchangeAddress, signers, ethers.utils.parseEther("10"), ethers.utils.parseEther("1"));
     //await createSellOffer(exchangeAddress, signers, 200, 10);
     // await acceptOffer(exchangeAddress, signers, 0, ethers.utils.parseEther("1"));
     // await cancelOffer(exchangeAddress, signers, 1);
-     await getOffersCount(exchangeAddress, signers);
+    //await getOffersCount(exchangeAddress, signers);
+    await balanceOf(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, signers);
 }
 
 // Run the script

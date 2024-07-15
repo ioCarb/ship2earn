@@ -1,12 +1,12 @@
 {
-  "VerifierModule#Verifier": "0x9e06244ae32D0091d207a49C61BA1C28BC509eF9",
+  "VerifierModule#Verifier": "0x42c3042bf8BA48Efb1CFd9B246fD453DA041D981",
   "DeviceRegistryModule#DeviceRegistry": "0x070fF0C1A859b28553681A09ff195a969E13747E",
-  "AllowanceContractModule#AllowanceContract": "0x360535b32144ab3E92A274652058E98fCAB22D12",
+  "AllowanceContractModule#AllowanceContract": "0x80Fb4CcCB7658ce94348d5DACa6F718306059619",
   "CarbTokenModule#CarbToken": "0xb0d538584F906d30c17C407e63CB8C84ddE97903",
   "CRBTokenExchangeModule#CRBTokenExchange": "0xEDb6fD66dCE1dEe9dE96ACC9a31b0CB64A17df4e",
-  "FirstPartModule#AllowanceContract": "0x52411002Df7049BA2695949235a8357f79A0704c",
-  "FirstPartModule#CarbToken": "0xcBA33A4E12f7EC1B197E4B819CB3dd91e22d2574",
-  "FirstPartModule#DeviceRegistry": "0xb6c6CC8826b695F404aa08399bFFccdAfb9A69d6",
-  "SecondPartModule#CRBTokenExchange": "0x4eEFEE0D9791279A7288E5AD0EE3A05D4181301f",
-  "SecondPartModule#Verifier": "0xd207e630ec63c2959CCC230336cbF90458d1bb3B"
+  "FirstPartModule#AllowanceContract": "0x3e16077FBE240f74B52Da1B1B899B0CE7e36FE3F",
+  "FirstPartModule#CarbToken": "0x7f52eF49eaf399A4b4c825D526d351B0065579d2",
+  "FirstPartModule#DeviceRegistry": "0x610e16dDaC25a4705A9dEeC9D07538cB85bCf002",
+  "SecondPartModule#CRBTokenExchange": "0x6f927274accD51c71b8f517C985de655925944A3",
+  "SecondPartModule#Verifier": "0x38F5001039C2C731E2f222530177bE02a6507435"
 }

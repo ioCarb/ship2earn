@@ -5,7 +5,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 interface ITokenContract {
     function mint(address to, uint amount) external;
-    function getTokens(address _company) external returns (uint256);
+    function balanceOf(address _company) external returns (uint256);
     function burn(address _company, uint256 _amount) external;
 }
 
@@ -47,14 +47,18 @@ contract AllowanceContract is AccessControl {
     constructor() {
         _grantRole(ADMIN_ROLE, msg.sender);
         _grantRole(OPERATOR_ROLE, msg.sender);
+        _grantRole(VERIFIER_ROLE, msg.sender);
     }
 
     event verifierRoleSet(address verifier); // emitted when verifier role is set -> emits address of verifier
     event operatorRoleSet(address operator); // emitted when operator role is set -> emits address of operator
     event tokenContractSet(address tokenContract); // emitted when minting contract is set -> emits address of minting contract
     event certContractSet(address certContract); // emitted when certificate contract is set -> emits address of certificate contract
+    event deviceRegistrySet(address deviceRegistry); // emitted when device registry contract is set -> emits address of device registry contract
+    event CompanyAdded(address company, uint256 allowance); // emitted when a company is added to the list of companies
     event EmissionReportReceived(address company, uint256 excess, bool achieved); // emitted when companys allowance is checked 
-    event CompanyDataReady(address company, bool ready); // emitted when all vehicles of a company have reported their CO2 emissions
+    event CompanyDataReady(uint256 _vehicleID, address _company, uint256 _trackedCO2, bool r); // emitted when all vehicles of a company have reported their CO2 emissions
+    event Custom(uint256 _deviceID, address _company, uint256 _trackedCO2, address tmp);
 
     // sets the verifier role to the address of the verifier contract
     function setVerifierRole(address _verifier) public onlyRole(ADMIN_ROLE) {
@@ -80,6 +84,12 @@ contract AllowanceContract is AccessControl {
         emit certContractSet(_certContract);
     }
 
+    // sets the device registry contract to the address of the device registry contract
+    function setDeviceRegistry(address _deviceRegistry) public onlyRole(ADMIN_ROLE) {
+        deviceRegistry = IDeviceRegistry(_deviceRegistry);
+        emit deviceRegistrySet(_deviceRegistry);
+    }
+
     // adds a company to the list of companies with their CO2 allowance
     function addCompany(address _company, uint256 _allowance) public onlyRole(OPERATOR_ROLE) {
         companies[_company] = Company({
@@ -89,6 +99,7 @@ contract AllowanceContract is AccessControl {
             vehicles_tracked: 0
         });
         companyAddresses.push(_company);
+        emit CompanyAdded(_company, _allowance);
     }
 
     // adjusts the allowance of a company
@@ -107,25 +118,30 @@ contract AllowanceContract is AccessControl {
     }
 
     // called by Verifier Contract if proof is valid
-    function emissionReport(uint256 _vehicleID, address _company, uint256 _trackedCO2) public onlyRole(VERIFIER_ROLE) {
-        require(deviceRegistry.getDeviceWallet(_vehicleID) == _company, "Vehicle not registered to company");
+    function emissionReport(uint256 _deviceID, address _company, uint256 _trackedCO2) public onlyRole(VERIFIER_ROLE) {
+        address tmp = deviceRegistry.getDeviceWallet(_deviceID);
+        require(tmp == _company, "Vehicle not registered to company");
         companies[_company].trackedCO2 += _trackedCO2;
         companies[_company].vehicles_tracked += 1;
-        emit CompanyDataReady(_company, false);
+        emit Custom(_deviceID, _company, _trackedCO2, tmp);
         if (companies[_company].vehicles_tracked == companies[_company].num_vehicles) {
-            emit CompanyDataReady(_company, true);
+            emit CompanyDataReady(_deviceID, tmp, _trackedCO2, true);
+            checkAllowance(_company);
+        } else {
+            emit CompanyDataReady(_deviceID, tmp, _trackedCO2, false);
         }
     }
 
-    function checkAllowance(address _company) public onlyRole(OPERATOR_ROLE) {
+    function checkAllowance(address _company) internal {
         if (companies[_company].trackedCO2 == companies[_company].allowance) {
             // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
+            companies[_company].trackedCO2 = 0;
             emit EmissionReportReceived(_company, 0, true);
         } else if (companies[_company].trackedCO2 < companies[_company].allowance) {
             uint256 savings = companies[_company].allowance - companies[_company].trackedCO2;
             // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
             tokenContract.mint(_company, savings);            // mint tokens corresponding to negative CO2 surplus
-            companies[_company].trackedCO2 = companies[_company].allowance;
+            companies[_company].trackedCO2 = 0;
             emit EmissionReportReceived(_company, savings, true);
         } else {
             uint256 excess = companies[_company].trackedCO2 - companies[_company].allowance;
@@ -145,7 +161,7 @@ contract AllowanceContract is AccessControl {
         if (_excess == 0) {
             revert("No excess to offset");
         } else {
-            uint256 _amount = tokenContract.getTokens(_company);
+            uint256 _amount = tokenContract.balanceOf(_company);
             if (_amount >= _excess) {
                 tokenContract.burn(_company, _excess);
                 companies[_company].trackedCO2 = companies[_company].allowance;
@@ -157,17 +173,8 @@ contract AllowanceContract is AccessControl {
         }
     }
 
-    // burns tokens and mints certificates
-    function burnTokens(uint256 _amount) public {
-        address _company = msg.sender;
-        if (_amount == 0) {
-            _amount = tokenContract.getTokens(_company);
-        }
-        if ((_amount > 0) && (companies[_company].trackedCO2 == companies[_company].allowance)) {
-            tokenContract.burn(_company, _amount);
-            //event
-        } else {
-            revert("No tokens to burn or still excess CO2 emissions to offset");
-        }   
+    // function to view current company stats
+    function getCompanyStats(address _company) public view returns (uint256, uint256, uint32, uint32) {
+        return (companies[_company].allowance, companies[_company].trackedCO2, companies[_company].num_vehicles, companies[_company].vehicles_tracked);
     }
 }

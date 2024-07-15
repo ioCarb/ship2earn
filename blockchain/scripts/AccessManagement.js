@@ -26,10 +26,13 @@ async function setAccessInAllowanceContract(AllowanceContractAddress, VerifierCo
     console.log(chalk.green(`Event: Operator Role set for ${address}.`));
   });
   Contract.on("tokenContractSet", (address) => {
-    console.log(chalk.green(`Event: Operator Role set for ${address}.`));
+    console.log(chalk.green(`Event: Token Contract set to ${address}.`));
   });
   Contract.on("certContractSet", (address) => {
-    console.log(chalk.green(`Event: Operator Role set for ${address}.`));
+    console.log(chalk.green(`Event: Cert Contract set to ${address}.`));
+  });
+  Contract.on("deviceRegistrySet", (address) => {
+    console.log(chalk.green(`Event: Device Registry set to ${address}.`));
   });
   const tx = await Contract.setVerifierRole(VerifierContractAddress);
   // -> Gas used: 42,576
@@ -49,7 +52,12 @@ async function setAccessInAllowanceContract(AllowanceContractAddress, VerifierCo
   receipt3 = await tx3.wait();
   console.log(`Transaction confirmed in block: ${receipt3.blockNumber}`);
   console.log(chalk.red(`Gas used: ${receipt3.gasUsed.toString()}`));
-  // const tx4 = await Contract.setCertContract(CertContractAddress); to be done
+  const tx4 = await Contract.setDeviceRegistry(DeviceRegistryAddress);
+  console.log(`Transaction hash: ${tx4.hash}`);
+  receipt4 = await tx4.wait();
+  console.log(`Transaction confirmed in block: ${receipt4.blockNumber}`);
+  console.log(chalk.red(`Gas used: ${receipt4.gasUsed.toString()}`));
+  // const tx5 = await Contract.setCertContract(CertContractAddress); to be done
 }
 
 async function setAccessInCarbToken(CarbTokenAddress, AllowanceContractAddress, signers) {

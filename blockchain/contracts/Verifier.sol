@@ -194,17 +194,16 @@ contract Verifier {
     constructor(address _AllowanceAddress) {
         allowanceContract = IAllowanceContract(_AllowanceAddress);
     }
-    event Verified(bool r, bool stored);
+    event Verified(bool r);
     function verifyTx(Proof memory proof, uint256[24] memory input) public returns (bool) {
         uint256[31] memory input_padded;
         for (uint i = 0; i < input.length; i++) {
             input_padded[i] = input[i];
         }
         bool success = verifyTxAux(input_padded, proof);
-        emit Verified(success, false);
         if (success) {
             allowanceContract.emissionReport(input[21], address(uint160(input[22])), input[23]);
-            emit Verified(success, true);
+            emit Verified(success);
         }
         return success;
     }

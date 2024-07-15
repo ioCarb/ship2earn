@@ -76,25 +76,6 @@ contract DeviceRegistry is AccessControl {
         emit AllowanceContractSet(_allowanceContract);
     }
 
-    // getter function to get all devices for a given wallet address
-    function getDevicesByWallet(address _wallet) public view returns (uint256[] memory) {
-        uint256 count = 0;
-        for (uint256 i = 0; i < Device_devices.length; i++) {
-            if (devices[Device_devices[i]].wallet == _wallet) {
-                count++;
-            }
-        }
-        uint256[] memory result = new uint256[](count);
-        uint256 index = 0;
-        for (uint256 i = 0; i < Device_devices.length; i++) {
-            if (devices[Device_devices[i]].wallet == _wallet) {
-                result[index] = Device_devices[i];
-                index++;
-            }
-        }  
-        return result;
-    }
-
     // function to register a device to a vehicle
     function registerDevice(uint256 _deviceID, uint256 _vehicleId, address _wallet) 
         public onlyRole(OPERATOR_ROLE) onlyUnregisteredDevice(_deviceID) {
@@ -130,14 +111,40 @@ contract DeviceRegistry is AccessControl {
     } 
 
     // function to transfer the ownership of a device to a new user initiated by ioCarb (in an error scenario)
-    function transferDeviceOwnerIoCarb(uint256 _deviceID, address _wallet) 
-        public onlyRole(OPERATOR_ROLE) {
+    function transferDeviceOwner(uint256 _deviceID, address _wallet) public onlyRole(OPERATOR_ROLE) {
         devices[_deviceID].wallet = _wallet;
         emit DeviceBound(_deviceID, _wallet, true);
+    }
+
+    // getter function to get all devices for a given wallet address
+    function getDevicesByWallet(address _wallet) public view returns (uint256[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < Device_devices.length; i++) {
+            if (devices[Device_devices[i]].wallet == _wallet) {
+                count++;
+            }
+        }
+        uint256[] memory result = new uint256[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < Device_devices.length; i++) {
+            if (devices[Device_devices[i]].wallet == _wallet) {
+                result[index] = Device_devices[i];
+                index++;
+            }
+        }  
+        return result;
     }
 
     // function to retrieve wallet address of a device
     function getDeviceWallet(uint256 _deviceID) public view returns (address) {
         return devices[_deviceID].wallet;
+    }
+
+    function getDeviceData(uint256 _deviceID) public view returns (uint256, uint256, address, bool) {
+        return (devices[_deviceID].vehicleId, _deviceID, devices[_deviceID].wallet, devices[_deviceID].isBound);
+    }
+
+    function getVehicleData(uint256 _vehicleId) public view returns (string memory, uint256) {
+        return (vehicles[_vehicleId].vehicleType, vehicles[_vehicleId].avgEmissions);
     }
 }
