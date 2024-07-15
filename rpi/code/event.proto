@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message Header {
+  string event_type = 1; // event type
+  string token = 3;      // for validation message
+  int64 timestamp = 4;    // event pub timestamp
+}
+
+message Event {
+  Header header = 1;
+  bytes payload = 2;
+}
