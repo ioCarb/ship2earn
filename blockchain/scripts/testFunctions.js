@@ -15,7 +15,7 @@ async function getDeviceWallet(DeviceRegistryAddress, signers) {
 async function mintTokens(CarbTokenAddress, company, amount, signers) {
   const chalk = (await import('chalk')).default;
   const CarbToken = await ethers.getContractAt("CarbToken", CarbTokenAddress, signers[0]);
-  CarbToken.on("Minted", (to, amount) => {
+  CarbToken.on("minted", (to, amount) => {
     console.log(chalk.green(`Event: Minted ${amount} tokens to ${to}.`));
   });
   const tx = await CarbToken.mint(company, amount);
@@ -126,16 +126,16 @@ async function main() {
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
   //await getCompanyStats(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, signers);
   //await getDeviceWallet(DeviceRegistryAddress, signers);
-  //await mintTokens(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, 900, signers);
+  await mintTokens(CarbTokenAddress, process.env.B_ADDRESS_TESTNET, 900, signers);
   //await burnTokens(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, 1900, signers);
   //await resetCompanyData(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, signers);
-  await adjustAllowance(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, 30000, signers);
+  //await adjustAllowance(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, 30000, signers);
   //await adjustVehicleCount(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, signers);
   //await getDeviceData(DeviceRegistryAddress, deviceID=12345, signers);
   //await getVehicleData(DeviceRegistryAddress, vehicleID=1234, signers);
   //await getDevicesByWallet(DeviceRegistryAddress, wallet=process.env.ADDRESS_COMPANY_D, signers);
   //await emissionReport(AllowanceContractAddress, CarbTokenAddress, company=process.env.ADDRESS_COMPANY_D, deviceID=12345, trackedCO2=29600, signers);
-  await getCompanyStats(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, signers);
+  //await getCompanyStats(AllowanceContractAddress, process.env.ADDRESS_COMPANY_D, signers);
 }
 
 // Run the script

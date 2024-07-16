@@ -136,12 +136,14 @@ contract AllowanceContract is AccessControl {
         if (companies[_company].trackedCO2 == companies[_company].allowance) {
             // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
             companies[_company].trackedCO2 = 0;
+            companies[_company].vehicles_tracked = 0;
             emit EmissionReportReceived(_company, 0, true);
         } else if (companies[_company].trackedCO2 < companies[_company].allowance) {
             uint256 savings = companies[_company].allowance - companies[_company].trackedCO2;
             // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
             tokenContract.mint(_company, savings);            // mint tokens corresponding to negative CO2 surplus
             companies[_company].trackedCO2 = 0;
+            companies[_company].vehicles_tracked = 0;
             emit EmissionReportReceived(_company, savings, true);
         } else {
             uint256 excess = companies[_company].trackedCO2 - companies[_company].allowance;

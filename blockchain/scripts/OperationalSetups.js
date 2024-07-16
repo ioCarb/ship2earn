@@ -65,7 +65,7 @@ async function main() {
         signers);
     // register a deviceID with corresponding vehicleID and wallet (wallet must already be added as a company)
     //await registerDevice(DeviceRegistryAddress,
-      //  deviceID = 12345, vehicleID = 1234, wallet = process.env.ADDRESS_COMPANY_D,
+      //  deviceID = 98765, vehicleID = 1234, wallet = process.env.ADDRESS_COMPANY_D,
         //signers);
   }
     

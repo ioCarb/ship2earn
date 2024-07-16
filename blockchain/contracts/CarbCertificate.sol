@@ -2,6 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
@@ -15,43 +17,64 @@ contract CarbCertificate is ERC721, AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    // Mapping from token ID to IPFS CID
-    mapping(uint256 => string) private _tokenCIDs;
+    using Strings for uint256;
+    using Strings for address;
 
-    // Base URI for constructing token URIs
-    string private _baseTokenURI;
+    uint256 private _nextTokenId;
 
-    constructor(string memory baseTokenURI) ERC721("CarbCert", "CRBC") {
-        _baseTokenURI = baseTokenURI;
-        _grantRole(ADMIN_ROLE, msg.sender);
+    struct NFTData {
+        uint256 mintDate;
+        address minterAddress;
+        string customString;
     }
 
-    // Function to mint a new token and set its CID
-    function mint(address to, uint256 tokenId, string memory cid) public onlyRole(ADMIN_ROLE) {
-        _mint(to, tokenId);
-        _setTokenCID(tokenId, cid);
+    mapping(uint256 => NFTData) private _nftData;
+
+    // Assuming the contract deployment date as the start of week counting
+    uint256 public immutable deploymentTimestamp;
+
+    constructor() ERC721("CarbCertificate", "CRBC") {
+        deploymentTimestamp = block.timestamp;
     }
 
-    // Internal function to set the CID for a token
-    function _setTokenCID(uint256 tokenId, string memory cid) internal virtual {
-        require(_ownerOf(tokenId) != address(0), "ERC721Metadata: CID set of nonexistent token");
-        _tokenCIDs[tokenId] = cid;
+    function mintNFT(address _wallet) public onlyRole(MINTER_ROLE) returns (uint256) {
+        uint256 tokenId = _nextTokenId++;
+        _safeMint(_wallet, tokenId);
+
+        uint256 weekNumber = (block.timestamp - deploymentTimestamp) / 1 weeks + 1;
+        string memory customString = string(abi.encodePacked(
+            "Congratulations, ", 
+            _wallet.toHexString(), 
+            " met the allowance for week ", 
+            weekNumber.toString()
+        ));
+
+        _nftData[tokenId] = NFTData({
+            mintDate: block.timestamp,
+            minterAddress: msg.sender,
+            customString: customString
+        });
+
+        return tokenId;
     }
 
-    // Override tokenURI to return the full IPFS link
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_ownerOf(tokenId) != address(0), "ERC721Metadata: URI query for nonexistent token");
-
-        string memory cid = _tokenCIDs[tokenId];
-        return string(abi.encodePacked(_baseTokenURI, cid));
+    function getNFTData(uint256 tokenId) public view returns (NFTData memory) {
+        require(_exists(tokenId), "NFT does not exist");
+        return _nftData[tokenId];
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+    function _exists(uint256 tokenId) internal view returns (bool) {
+        return _ownerOf(tokenId) != address(0);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, AccessControl)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 
-    // Public function to set a new base URI
-    function setBaseURI(string memory baseTokenURI) public onlyRole(ADMIN_ROLE) {
-        _baseTokenURI = baseTokenURI;
-    }
 }

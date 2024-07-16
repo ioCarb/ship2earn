@@ -7,7 +7,8 @@ module.exports = {
   networks: {
     testnet: {
       url: `https://babel-api.testnet.iotex.io`,
-      accounts: [process.env.PRIV_KEY_TESTNET],
+      accounts: [process.env.PRIV_KEY_TESTNET,
+        process.env.B_PRIV_KEY_TESTNET],
       gas: 10000000, // Set your desired gas limit here
     },
     localIotex: {

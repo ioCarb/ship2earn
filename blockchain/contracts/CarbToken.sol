@@ -17,7 +17,7 @@ contract CarbToken is ERC20, AccessControl	{
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 private constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
-    constructor() ERC20("Carb_Token", "CRB") {
+    constructor() ERC20("CarbToken", "CRB") {
         // Grant the default admin every role for initial deployments and testing 
         _grantRole(ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
