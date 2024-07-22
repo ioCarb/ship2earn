@@ -11,5 +11,8 @@ module.exports = buildModule("FirstPartModule", (m) => {
     // AllowanceContract
     const allowanceContract = m.contract("AllowanceContract");
 
-    return { deviceRegistry, carbToken, allowanceContract };
+    // CarbCertificate
+    const carbCertificate = m.contract("CarbCertificate");
+
+    return { deviceRegistry, carbToken, allowanceContract, carbCertificate };
 });

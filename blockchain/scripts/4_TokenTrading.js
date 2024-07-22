@@ -1,16 +1,18 @@
 require('dotenv').config();
 const { ethers } = require("hardhat")
 
-async function balanceOf(CarbTokenAddress, wallet, signer) {
+// get CRB balance of signer
+async function balanceOf(CarbTokenAddress, signer) {
     const CarbToken = await ethers.getContractAt("CarbToken", CarbTokenAddress, signer);
-    const balance = await CarbToken.balanceOf(wallet);
-    console.log(`Balance of ${wallet}: ${balance}`);
+    const balance = await CarbToken.balanceOf(signer.address);
+    console.log(`Balance of ${signer.address}: ${balance}`);
 }
 
-async function sendIOTX(wallet, amount, signers) {
+// send IOTX to wallet from signer
+async function sendIOTX(wallet, amount, signer) {
     const chalk = (await import('chalk')).default;
     const amountInWei = ethers.parseUnits(amount, 18);
-    const tx = await signers[0].sendTransaction({
+    const tx = await signer.sendTransaction({
         to: wallet,
         value: amountInWei
     });
@@ -20,9 +22,10 @@ async function sendIOTX(wallet, amount, signers) {
     console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
 }
 
-async function sendCRBToken(CarbTokenAddress, wallet, amount, signers) {
+// send CRB tokens to wallet from signer
+async function sendCRBToken(CarbTokenAddress, wallet, amount, signer) {
     const chalk = (await import('chalk')).default;
-    const CarbToken = await ethers.getContractAt("CarbToken", CarbTokenAddress, signers[0]);
+    const CarbToken = await ethers.getContractAt("CarbToken", CarbTokenAddress, signer);
     const tx = await CarbToken.transfer(wallet, amount);
     console.log(`Transaction hash: ${tx.hash}`);
     const receipt = await tx.wait();
@@ -30,17 +33,23 @@ async function sendCRBToken(CarbTokenAddress, wallet, amount, signers) {
     console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
 }
 
+// functions to send CRB and IOTX tokens
 async function main() {
     const signers = await ethers.getSigners();
     const CRBTokenExchangeAddress = process.env.CRBTOKENEXCHANGE_ADDRESS;
     const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
-    await balanceOf(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, signers[0]);
-    await sendCRBToken(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, 100, signers);
-    await balanceOf(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, signers);
-    //await sendIOTX(process.env.B_ADDRESS_TESTNET, "1", signers);
+    const signer = signers[0];
+
+    // get CRB balance of signer
+    //await balanceOf(CarbTokenAddress, signer);
+
+    // send CRB tokens to wallet from signer: 
+    //await sendCRBToken(CarbTokenAddress, wallet = process.env.ADDRESS_COMPANY_D, 100, signer);
+
+    // send IOTX to wallet from signer:
+    //await sendIOTX(process.env.B_ADDRESS_TESTNET, "1", signer);
 }
 
-// Run the script
 main()
     .then(() => process.exit(0))
     .catch(error => {

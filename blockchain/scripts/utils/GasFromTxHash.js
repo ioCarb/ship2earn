@@ -4,7 +4,7 @@ const path = require("path");
 
 async function main() {
   // Get the transaction hash
-  const txHash = "0xe3663afd58eb77b34d47f793bcab15abb846519019a62f674c631da946adea9c";
+  const txHash = "0xceecc0e83ae5ebb1113558c466709a092c36369212b26227586404282363fe9c";
 
   // Get the transaction receipt
   const receipt = await hre.ethers.provider.getTransactionReceipt(txHash);

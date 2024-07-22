@@ -10,7 +10,7 @@ interface ITokenContract {
 }
 
 interface ICertContract {
-    function mint(address to, string memory cert_type, uint amount) external;
+    function mint(address to) external;
 }
 
 interface IDeviceRegistry {
@@ -19,10 +19,8 @@ interface IDeviceRegistry {
 
 /**
  * @title AllowanceContract
- * @dev Contract to verify and store achieved CO2 savings
+ * @dev Contract to verify and store CO2 emissions and check them against a respective company allowance
  * TODO: 
- * TODO: 
- * done: Implement burn function to burn tokens, reduce trackedCO2, and check allowance
  */
 
 contract AllowanceContract is AccessControl {
@@ -58,7 +56,6 @@ contract AllowanceContract is AccessControl {
     event CompanyAdded(address company, uint256 allowance); // emitted when a company is added to the list of companies
     event EmissionReportReceived(address company, uint256 excess, bool achieved); // emitted when companys allowance is checked 
     event CompanyDataReady(uint256 _vehicleID, address _company, uint256 _trackedCO2, bool r); // emitted when all vehicles of a company have reported their CO2 emissions
-    event Custom(uint256 _deviceID, address _company, uint256 _trackedCO2, address tmp);
 
     // sets the verifier role to the address of the verifier contract
     function setVerifierRole(address _verifier) public onlyRole(ADMIN_ROLE) {
@@ -123,7 +120,6 @@ contract AllowanceContract is AccessControl {
         require(tmp == _company, "Vehicle not registered to company");
         companies[_company].trackedCO2 += _trackedCO2;
         companies[_company].vehicles_tracked += 1;
-        emit Custom(_deviceID, _company, _trackedCO2, tmp);
         if (companies[_company].vehicles_tracked == companies[_company].num_vehicles) {
             emit CompanyDataReady(_deviceID, tmp, _trackedCO2, true);
             checkAllowance(_company);
@@ -132,18 +128,15 @@ contract AllowanceContract is AccessControl {
         }
     }
 
+    // checks if the company has reached its CO2 allowance the moment all vehicles have reported their CO2 emissions
     function checkAllowance(address _company) internal {
         if (companies[_company].trackedCO2 == companies[_company].allowance) {
-            // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
-            companies[_company].trackedCO2 = 0;
-            companies[_company].vehicles_tracked = 0;
+            certContract.mint(_company);
             emit EmissionReportReceived(_company, 0, true);
         } else if (companies[_company].trackedCO2 < companies[_company].allowance) {
             uint256 savings = companies[_company].allowance - companies[_company].trackedCO2;
-            // certContract.mint(_company, "allowance", 0);     --> CertContract not ready yet
+            certContract.mint(_company);
             tokenContract.mint(_company, savings);            // mint tokens corresponding to negative CO2 surplus
-            companies[_company].trackedCO2 = 0;
-            companies[_company].vehicles_tracked = 0;
             emit EmissionReportReceived(_company, savings, true);
         } else {
             uint256 excess = companies[_company].trackedCO2 - companies[_company].allowance;
@@ -151,6 +144,7 @@ contract AllowanceContract is AccessControl {
         }
     }
 
+    // resets the tracked CO2 emissions and the number of vehicles tracked for a company, to be calles by ioCarb operations team
     function resetCompanyData(address _company) public onlyRole(OPERATOR_ROLE) {
         companies[_company].trackedCO2 = 0;
         companies[_company].vehicles_tracked = 0;
@@ -167,7 +161,7 @@ contract AllowanceContract is AccessControl {
             if (_amount >= _excess) {
                 tokenContract.burn(_company, _excess);
                 companies[_company].trackedCO2 = companies[_company].allowance;
-                // certContract.mint(_company, "allowance", 0); --> CertContract not ready yet
+                certContract.mint(_company);
                 emit EmissionReportReceived(_company, 0, true);
             } else {
                 revert("Insufficient tokens to offset excess");

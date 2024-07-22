@@ -140,10 +140,12 @@ contract DeviceRegistry is AccessControl {
         return devices[_deviceID].wallet;
     }
 
+    // function to retrieve device data
     function getDeviceData(uint256 _deviceID) public view returns (uint256, uint256, address, bool) {
         return (devices[_deviceID].vehicleId, _deviceID, devices[_deviceID].wallet, devices[_deviceID].isBound);
     }
 
+    // function to retrieve vehicle data
     function getVehicleData(uint256 _vehicleId) public view returns (string memory, uint256) {
         return (vehicles[_vehicleId].vehicleType, vehicles[_vehicleId].avgEmissions);
     }

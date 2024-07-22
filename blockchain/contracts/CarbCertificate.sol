@@ -30,23 +30,61 @@ contract CarbCertificate is ERC721, AccessControl {
 
     mapping(uint256 => NFTData) private _nftData;
 
-    // Assuming the contract deployment date as the start of week counting
-    uint256 public immutable deploymentTimestamp;
-
     constructor() ERC721("CarbCertificate", "CRBC") {
-        deploymentTimestamp = block.timestamp;
+        _grantRole(ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, msg.sender);
     }
 
+    // Get the week number and year from a timestamp
+    function getWeekNumberAndYear(uint256 timestamp) public pure returns (uint256 week, uint256 year) {
+        // Calculate the year
+        year = 1970;
+        uint256 secondsInYear = 31536000; // 365 days
+        uint256 secondsInLeapYear = 31622400; // 366 days
+        
+        while (timestamp >= secondsInYear) {
+            if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+                if (timestamp >= secondsInLeapYear) {
+                    timestamp -= secondsInLeapYear;
+                    year++;
+                } else {
+                    break;
+                }
+            } else {
+                timestamp -= secondsInYear;
+                year++;
+            }
+        }
+
+        // Calculate the week number
+        uint256 dayOfYear = timestamp / 86400; // 86400 seconds in a day
+        uint256 wday = (dayOfYear + 3) % 7; // Day of week with Monday as 0
+        week = (dayOfYear + 7 - wday) / 7;
+
+        if (week == 0) {
+            year--;
+            week = 52;
+            // Check if the last year was a leap year
+            if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+                week = 53;
+            }
+        }
+    }
+
+    // Mint a new NFT, company will receive a certificate for meeting the allowance for the past week
     function mintNFT(address _wallet) public onlyRole(MINTER_ROLE) returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         _safeMint(_wallet, tokenId);
 
-        uint256 weekNumber = (block.timestamp - deploymentTimestamp) / 1 weeks + 1;
+        (uint256 weekNumber, uint256 year) = getWeekNumberAndYear(block.timestamp);
+
         string memory customString = string(abi.encodePacked(
-            "Congratulations, ", 
-            _wallet.toHexString(), 
-            " met the allowance for week ", 
-            weekNumber.toString()
+            "Congratulations, ",
+            Strings.toHexString(uint160(_wallet), 20),
+            " met the allowance for week ",
+            weekNumber.toString(),
+            " in ",
+            year.toString()
         ));
 
         _nftData[tokenId] = NFTData({
@@ -56,6 +94,20 @@ contract CarbCertificate is ERC721, AccessControl {
         });
 
         return tokenId;
+    }
+
+    function tokensOfOwner(address owner) external view returns (uint256[] memory) {
+        uint256 tokenCount = balanceOf(owner);
+        uint256[] memory tokenIds = new uint256[](tokenCount);
+        uint256 index = 0;
+
+        for (uint256 tokenId = 0; tokenId < _nextTokenId; tokenId++) {
+            if (_exists(tokenId) && ownerOf(tokenId) == owner) {
+                tokenIds[index] = tokenId;
+                index++;
+            }
+        }
+        return tokenIds;
     }
 
     function getNFTData(uint256 tokenId) public view returns (NFTData memory) {

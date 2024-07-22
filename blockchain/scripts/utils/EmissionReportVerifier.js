@@ -5,18 +5,15 @@ const path = require('path');
 
 function extractProofDataGM(filePath) {
   const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  const proof = [data.proof];
+  const proof = [data.proof.a, data.proof.b, data.proof.c];
   const input = data.inputs;
-  return { proof, input};
+  console.log(proof);
+  console.log(input);
+  return { proof, input };
 }
 
 function extractProofDataMarlin(filePath) {
-
-
   const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-  //console.log(data);
-
   const proof = [
     data.proof.commitments[0].map(comm => comm[0]),
     data.proof.commitments[1].map(comm => comm[0]),
@@ -28,12 +25,9 @@ function extractProofDataMarlin(filePath) {
     data.proof.pc_lc_opening_1_degree,
     data.proof.pc_lc_opening_2
   ];
-
   const input = data.inputs;
-
   //console.log(proof);
   //console.log(input);
-
   return { proof, input };
 }
 
@@ -51,38 +45,12 @@ async function verifyTx(VerifierContractAddress, AllowanceContractAddress, CarbT
   AllowanceContract.on("EmissionReportReceived", (company, savings, success) => {
     console.log(chalk.green(`Event: Company ${company}, saved ${savings}, success: ${success}.`));
   });
-  AllowanceContract.on("Custom", (_deviceID, _company, _trackedCO2, tmp) => {
-    console.log(chalk.green(`Event: DeviceID: ${_deviceID}\nCompany: ${_company}\nTrackedCO2: ${_trackedCO2}\nAddressDevice: ${tmp}`));
-  });
   CarbToken.on("minted", (to, amount) => {
     console.log(chalk.green(`Event: Minted ${amount} tokens to ${to}.`));
   });
   const tx = await VerifierContract.verifyTx(proof, input, { gasLimit: 50000000 });
   // -> Gas used: 
-  console.log(`Transaction hash: ${tx.hash}`);
-  receipt = await tx.wait();
-  console.log(`Transaction confirmed in block: ${receipt.blockNumber}`);
-  console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
-}
-
-async function resetCompanyData(AllowanceContractAddress, company, signers) {
-  const chalk = (await import('chalk')).default;
-  const AllowanceContract = await ethers.getContractAt('AllowanceContract', AllowanceContractAddress, signers[0]);
-  const tx = await AllowanceContract.resetCompanyData(company);
-  // -> Gas used: 
-  console.log(`Transaction hash: ${tx.hash}`);
-  receipt = await tx.wait();
-  console.log(`Transaction confirmed in block: ${receipt.blockNumber}`);
-  console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
-}
-
-async function checkAllowance(AllowanceContractAddress, company, signers) {
-  const chalk = (await import('chalk')).default;
-  const AllowanceContract = await ethers.getContractAt('AllowanceContract', AllowanceContractAddress, signers[0]);
-  AllowanceContract.on("EmissionReportReceived", (company, savings, success) => {
-    console.log(chalk.green(`Event: Company ${company}, saved ${savings}, success: ${success}.`));
-  });
-  const tx = await AllowanceContract.checkAllowance(company);
+  console.log(`Transaction hash: ${tx}`);
   console.log(`Transaction hash: ${tx.hash}`);
   receipt = await tx.wait();
   console.log(`Transaction confirmed in block: ${receipt.blockNumber}`);
@@ -92,16 +60,16 @@ async function checkAllowance(AllowanceContractAddress, company, signers) {
 async function main() {
   const signers = await ethers.getSigners();
   const jsonFilePath = path.join(__dirname, 'proof.json');
-  const { proof, input} = extractProofDataMarlin(jsonFilePath);
+  const { proof, input } = extractProofDataMarlin(jsonFilePath); 
+  //const { proofGM, inputGM } = extractProofDataGM(jsonFilePath);
   const AllowanceContractAddress = process.env.ALLOWANCECONTRACT_ADDRESS;
   const VerifierContractAddress = process.env.DIST_VERIFIER_CONTRACT_ADDRESS;
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
   await verifyTx(VerifierContractAddress, AllowanceContractAddress, CarbTokenAddress, proof, input , signers);
-  //await resetCompanyData(AllowanceContractAddress, company = process.env.ADDRESS_COMPANY_D, signers);
-  //await checkAllowance(AllowanceContractAddress, company = process.env.ADDRESS_COMPANY_D, signers);
 }
 
-// Run the script
+// Run the script to test proof acceptance and on-chain business logic 
+// without the need of a full w3bstream setup
 main()
   .then(() => process.exit(0))
   .catch(error => {

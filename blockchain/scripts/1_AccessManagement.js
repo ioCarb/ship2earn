@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-// todo: CertContractAddress in AllowanceContract
-
 async function setAccessInDeviceRegistry(DeviceRegistryAddress, AllowanceContractAddress, signers) {
   const chalk = (await import('chalk')).default;
   const Contract = await ethers.getContractAt("DeviceRegistry", DeviceRegistryAddress, signers[0]);
@@ -57,7 +55,11 @@ async function setAccessInAllowanceContract(AllowanceContractAddress, VerifierCo
   receipt4 = await tx4.wait();
   console.log(`Transaction confirmed in block: ${receipt4.blockNumber}`);
   console.log(chalk.red(`Gas used: ${receipt4.gasUsed.toString()}`));
-  // const tx5 = await Contract.setCertContract(CertContractAddress); to be done
+  const tx5 = await Contract.setCertContract(CertContractAddress);
+  console.log(`Transaction hash: ${tx5.hash}`);
+  receipt5 = await tx5.wait();
+  console.log(`Transaction confirmed in block: ${receipt5.blockNumber}`);
+  console.log(chalk.red(`Gas used: ${receipt5.gasUsed.toString()}`));
 }
 
 async function setAccessInCarbToken(CarbTokenAddress, AllowanceContractAddress, signers) {
@@ -97,6 +99,7 @@ async function setAccessInCertContract(CertContractAddress, AllowanceContractAdd
   console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
 }
 
+// script to set access roles and addresses within the contracts (first time setup)
 async function main() {
   const signers = await ethers.getSigners();
   const AllowanceContractAddress = process.env.ALLOWANCECONTRACT_ADDRESS;
@@ -104,16 +107,15 @@ async function main() {
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
   const DeviceRegistryAddress = process.env.DEVICEREGISTRY_ADDRESS;
   // sets the allowance contract address within the DeviceRegistry contract:
-  await setAccessInDeviceRegistry(DeviceRegistryAddress, AllowanceContractAddress, signers); 
-  // sets the access roles and addresses within the AllowanceContract
+  await setAccessInDeviceRegistry(DeviceRegistryAddress, AllowanceContractAddress, signers);
+  // sets the access roles and addresses within the AllowanceContract:
   await setAccessInAllowanceContract(AllowanceContractAddress, VerifierContractAddress, DeviceRegistryAddress, CarbTokenAddress, signers)
   // sets the minter burner role within the carb token contract:
-  await setAccessInCarbToken(CarbTokenAddress, AllowanceContractAddress, signers); 
-  // sets the minter burner role within the CertContract
-  //await setAccessInCertContract(CertContractAddress, AllowanceContractAddress, signers);
+  await setAccessInCarbToken(CarbTokenAddress, AllowanceContractAddress, signers);
+  // sets the minter burner role within the CertContract:
+  await setAccessInCertContract(CertContractAddress, AllowanceContractAddress, signers);
 }
-  
-// Run the script
+
 main()
   .then(() => process.exit(0))
   .catch(error => {
