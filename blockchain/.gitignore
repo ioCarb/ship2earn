@@ -2,6 +2,7 @@
 .notes.txt
 .vscode
 zokrates/
+archive/
 
 # automatically added
 node_modules
@@ -19,6 +20,5 @@ node_modules
 /coverage
 /coverage.json
 
-# Hardhat Ignition default folder for deployments against a local node
-ignition/deployments/chain-4689
-ignition/deployments/chain-4690
+# Hardhat Ignition default folder for deployments
+ignition/deployments
