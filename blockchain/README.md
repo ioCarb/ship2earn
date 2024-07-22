@@ -7,8 +7,8 @@ This project is a blockchain application built using Hardhat.
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Smart Contracts](#smart-contracts)
+- [Deployment and Initial Setup](#deploymentandsetup)
 - [Scripts](#scripts)
-- [Deployment](#deployment)
 
 ## Prerequisites
 
@@ -75,7 +75,7 @@ To compile the smart contracts, run:
 npx hardhat compile
 ```
 
-## Deployment
+## Deployment and Initial Setup
 
 To deploy the smart contracts (Initial Setup) on the testnet:
 
