@@ -1,0 +1,54 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+import "utils/casts/u8_to_bits.zok" as u8_to_bits;
+import "utils/casts/u32_from_bits" as u32_from_bits;
+import "utils/casts/u8_to_field" as u8_to_field;
+import "hashes/sha3/512bit.zok" as sha512;
+
+
+def getbits(u8[4] chunk)->bool[32]{
+    bool[4][8] mut res =[[false;8];4];
+    bool[32] mut result = [false;32];
+    for u32 i in 0..4{
+         res[i] = u8_to_bits(chunk[i]);
+    }
+
+    return [...res[0],...res[1],...res[2],...res[3]];
+}
+
+def asserthash(u32[8] M0,u32[8] M1,u8[722] input) -> bool {
+    log("input bytes {}",input);
+    u8[64] mut hash512 = sha512(input);
+    log("512hash {}",hash512);
+    u32[16] mut hash_u32 = [0;16];
+    for u32 i in 0..16{
+        u8[4] current_chunks = hash512[i*4..(i+1)*4];
+        bool[32] chunk_bits = getbits(current_chunks);
+        hash_u32[i] = u32_from_bits(chunk_bits);
+    }
+    log("512hash u32 chanks {} ",hash_u32);
+    
+
+return (M0 == hash_u32[0..8]) && (M1 == hash_u32[8..16]);
+}
+
+//device id, wallet address
+def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,private u8[720] dist,private u8 typ,private u8 deviceid,private field walletadrr) -> field[3] {
+    u8[722] input = [...dist,typ,deviceid];
+    bool isassert = asserthash(M0,M1,input);
+    log("assert? : {}",isassert);
+    assert(isassert);
+    BabyJubJubParams context = context();
+	assert(verifyEddsa(R, S, A, M0, M1, context));
+    log("signature {} is verified",S);
+    field mut sum = 0;
+    for u32 i in 0..720 {
+       sum = sum + u8_to_field(dist[i]);
+    }
+    
+    log("factor is {}",typ);
+    log("sum is {}", sum);
+    return [u8_to_field(deviceid),walletadrr,sum*u8_to_field(typ)];
+}
+

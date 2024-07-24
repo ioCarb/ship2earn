@@ -1,0 +1,95 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+import "hashes/sha3/512bit.zok" as sha512;
+import "utils/casts/u8_to_bits.zok" as u8_to_bits;
+import "utils/casts/u32_from_bits" as u32_from_bits;
+import "utils/casts/u8_to_field" as u8_to_field;
+
+
+
+def getbits(u8[4] chunk)->bool[32]{
+    bool[4][8] mut res =[[false;8];4];
+    bool[32] mut result = [false;32];
+    for u32 i in 0..4{
+         res[i] = u8_to_bits(chunk[i]);
+    }
+
+    return [...res[0],...res[1],...res[2],...res[3]];
+}
+
+def asserthash(u32[8] M0,u32[8] M1,u8[721] input) -> bool {
+    log("input bytes {}",input);
+    u8[64] mut hash512 = sha512(input);
+    log("512hash {}",hash512);
+    u32[16] mut hash_u32 = [0;16];
+    for u32 i in 0..16{
+        u8[4] current_chunks = hash512[i*4..(i+1)*4];
+        bool[32] chunk_bits = getbits(current_chunks);
+        hash_u32[i] = u32_from_bits(chunk_bits);
+    }
+    log("512hash u32 chanks {} ",hash_u32);
+    
+
+return (M0 == hash_u32[0..8]) && (M1 == hash_u32[8..16]);
+}
+
+
+
+//def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1, private field[144] temperature, private field[144] humidity, private field[144] speed, private field[144] acceleration, private bool[144] hasmoved, private field deviceid, private field walletaddress) -> (u32, field, field) {
+def main(field[6] R, field[3] S, field[6] A, u32[24] M0, u32[24] M1, private u8[432] temperature, private u8[432] humidity, private u8[432] speed, private u8[432] acceleration, private u8[432] hasmoved, private u8[3] deviceid, private field walletaddress) -> (u32, u8[3], field) {
+    for u32 i in 0..3{
+        log("=== MSG No°{}",i);
+        u8[721] input = [...temperature[i*144..(i+1)*144],...humidity[i*144..(i+1)*144],...speed[i*144..(i+1)*144],...acceleration[i*144..(i+1)*144],...hasmoved[i*144..(i+1)*144],deviceid[i]];
+        bool isassert = asserthash(M0[i*8..(i+1)*8],M1[i*8..(i+1)*8],input);
+        log("assert? : {}",isassert);
+        assert(isassert);
+        BabyJubJubParams context = context();
+	    assert(verifyEddsa(R[i*2..(i+1)*2], S[i], A[i*2..(i+1)*2], M0[i*8..(i+1)*8], M1[i*8..(i+1)*8], context));
+        log("signature {} is verified",S);
+    }
+        
+    u32 mut score = 0;
+    
+    field mut sum_temperature = 0;
+    field mut sum_humidity = 0;
+    field mut sum_pause = 0; //1 pause equals 10mins
+    field mut sum_speed_moving = 0;
+    
+    bool mut speed_compliant = true;
+    bool mut acceleration_compliant = true;
+    
+    for u32 i in 0..144 {
+       sum_temperature = sum_temperature + u8_to_field(temperature[i]);
+       sum_humidity = sum_humidity + u8_to_field(humidity[i]);
+       sum_speed_moving = if (hasmoved[i] == 1) {sum_speed_moving + u8_to_field(speed[i])} else {sum_speed_moving};
+       
+       speed_compliant = if speed[i] <= 130 {speed_compliant} else {false};
+       //Shift on Raspberry +100 to avoid negative values
+       acceleration_compliant =  if acceleration[i] <=102 && acceleration[i] >= 98 {acceleration_compliant} else {false} ;
+       
+       sum_pause = if (hasmoved[i] == 1) {sum_pause} else {sum_pause +1}; 
+    }
+    
+    field avg_temperature = sum_temperature/144;
+    field avg_humidity = sum_humidity/144;
+    field avg_speed_moving = sum_speed_moving/(144-sum_pause);
+    field avg_pause = sum_pause/144;
+    
+    field mut sum_of_squares = 0;
+    for u32 i in 0..144 {
+       sum_of_squares = if (hasmoved[i] == 1) {sum_of_squares + (u8_to_field(speed[i])-avg_speed_moving)**2} else {sum_of_squares};
+    }
+    field var_speed_moving = sum_of_squares/(144-sum_pause-1);
+
+    score = if avg_temperature > 5 && avg_temperature < 30 {score +1} else {score} ;
+    score = if avg_humidity > 40 && avg_humidity < 70 {score +1} else {score};
+    score = if var_speed_moving < 15 {score +1} else {score};
+    score = if avg_pause > (1/6) {score +1} else {score};
+    score = if speed_compliant  {score +1} else {score};
+    score = if acceleration_compliant  {score +1} else {score};
+    
+    log("score is {}", score);
+    
+    return (score, deviceid, walletaddress);
+}
