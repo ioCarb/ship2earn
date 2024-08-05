@@ -1,5 +1,5 @@
 [book]
-authors = ["Felix Dumbeck"]
+authors = ["Felix Dumbeck", "Manav Seegolam", "Ramon Mehrpoya", "Yannik Kopyciok", "Stefan Schilonka", "Ouassim Ghouil"]
 language = "en"
 multilingual = false
 src = "."
