@@ -1,0 +1,6 @@
+[book]
+authors = ["Felix Dumbeck"]
+language = "en"
+multilingual = false
+src = "."
+title = "ioCarb"
