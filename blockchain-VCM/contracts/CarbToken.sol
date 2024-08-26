@@ -8,7 +8,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  * @title CarbToken
  * @dev ERC20 token contract for carbon credits
  * TODO: trading tokens
- * TODO: 
+ * TODO:
  */
 
 contract CarbToken is ERC20, AccessControl	{

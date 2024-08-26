@@ -35,6 +35,10 @@ contract CarbCertificate is ERC721, AccessControl {
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
+    function setMinter(address _minterAddress) public onlyRole(ADMIN_ROLE) {
+        _grantRole(MINTER_ROLE, _minterAddress);
+    }
+
     // Get the week number and year from a timestamp
     function getWeekNumberAndYear(uint256 timestamp) public pure returns (uint256 week, uint256 year) {
         // Calculate the year

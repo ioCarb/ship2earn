@@ -3,7 +3,7 @@ require('ethers');
 const fs = require('fs');
 const path = require('path');
 
-function extractProofDataGM(filePath) {
+function extractProofDataG(filePath) {
   const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   const proof = [data.proof.a, data.proof.b, data.proof.c];
   const input = data.inputs;
@@ -50,7 +50,6 @@ async function verifyTx(VerifierContractAddress, AllowanceContractAddress, CarbT
   });
   const tx = await VerifierContract.verifyTx(proof, input, { gasLimit: 50000000 });
   // -> Gas used: 
-  console.log(`Transaction hash: ${tx}`);
   console.log(`Transaction hash: ${tx.hash}`);
   receipt = await tx.wait();
   console.log(`Transaction confirmed in block: ${receipt.blockNumber}`);
@@ -61,7 +60,7 @@ async function main() {
   const signers = await ethers.getSigners();
   const jsonFilePath = path.join(__dirname, 'proof.json');
   const { proof, input } = extractProofDataMarlin(jsonFilePath); 
-  //const { proofGM, inputGM } = extractProofDataGM(jsonFilePath);
+  //const { proof, input } = extractProofDataG(jsonFilePath);
   const AllowanceContractAddress = process.env.ALLOWANCECONTRACT_ADDRESS;
   const VerifierContractAddress = process.env.DIST_VERIFIER_CONTRACT_ADDRESS;
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;

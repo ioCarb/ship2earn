@@ -6,7 +6,6 @@ archive/
 
 # automatically added
 node_modules
-.env
 
 # Hardhat files
 /cache

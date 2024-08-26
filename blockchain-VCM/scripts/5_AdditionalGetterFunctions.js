@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('ethers');
+const { ethers } = require("hardhat")
 
 async function getCompanyStats(AllowanceContractAddress, company, signers) {
   const AllowanceContract = await ethers.getContractAt("AllowanceContract", AllowanceContractAddress, signers[0]);
@@ -39,9 +39,9 @@ async function main() {
   const AllowanceContractAddress = process.env.ALLOWANCECONTRACT_ADDRESS;
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
   await getCompanyStats(AllowanceContractAddress, company=process.env.COMPANY_ADDRESS_TESTNET, signers);
-  await getDevicesByWallet(DeviceRegistryAddress, wallet=process.env.COMPANY_ADDRESS_TESTNET, signers);
-  await getDeviceData(DeviceRegistryAddress, deviceID=12345, signers);
-  await getVehicleData(DeviceRegistryAddress, vehicleID=1234, signers);
+  //await getDevicesByWallet(DeviceRegistryAddress, wallet=process.env.COMPANY_ADDRESS_TESTNET, signers);
+  //await getDeviceData(DeviceRegistryAddress, deviceID=69, signers);
+  //await getVehicleData(DeviceRegistryAddress, vehicleID=1234, signers);
   await getNFTData(CarbCertificateAddress, tokenId=0, signers);
 }
 

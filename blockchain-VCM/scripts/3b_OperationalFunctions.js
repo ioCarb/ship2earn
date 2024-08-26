@@ -24,7 +24,6 @@ async function tokensOfOwner(CarbCertificateAddress, signer) {
     const CarbCertificate = await ethers.getContractAt('CarbCertificate', CarbCertificateAddress, signer);
     const data = await CarbCertificate.tokensOfOwner(signer.address);
     console.log(`Available NFT tokens: ${data}`);
-
     return data;
 }
 
@@ -43,7 +42,7 @@ async function main() {
     // adjust signer to company that wants to offset excess
     const signer = signers[0];
     await balanceOf(CarbTokenAddress, signer);
-    await offsetExcess(AllowanceContractAddress, signer);
+    //await offsetExcess(AllowanceContractAddress, signer);
     const data = await tokensOfOwner(CarbCertificateAddress, signer);
     await getNFTData(CarbCertificateAddress, data[0], signer);
 }

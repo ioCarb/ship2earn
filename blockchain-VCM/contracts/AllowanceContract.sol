@@ -10,7 +10,7 @@ interface ITokenContract {
 }
 
 interface ICertContract {
-    function mint(address to) external;
+    function mintNFT(address to) external;
 }
 
 interface IDeviceRegistry {
@@ -117,7 +117,7 @@ contract AllowanceContract is AccessControl {
     // called by Verifier Contract if proof is valid
     function emissionReport(uint256 _deviceID, address _company, uint256 _trackedCO2) public onlyRole(VERIFIER_ROLE) {
         address tmp = deviceRegistry.getDeviceWallet(_deviceID);
-        require(tmp == _company, "Vehicle not registered to company");
+        //require(tmp == _company, "Vehicle not registered to company");
         companies[_company].trackedCO2 += _trackedCO2;
         companies[_company].vehicles_tracked += 1;
         if (companies[_company].vehicles_tracked == companies[_company].num_vehicles) {
@@ -131,11 +131,11 @@ contract AllowanceContract is AccessControl {
     // checks if the company has reached its CO2 allowance the moment all vehicles have reported their CO2 emissions
     function checkAllowance(address _company) internal {
         if (companies[_company].trackedCO2 == companies[_company].allowance) {
-            certContract.mint(_company);
+            certContract.mintNFT(_company);
             emit EmissionReportReceived(_company, 0, true);
         } else if (companies[_company].trackedCO2 < companies[_company].allowance) {
             uint256 savings = companies[_company].allowance - companies[_company].trackedCO2;
-            certContract.mint(_company);
+            certContract.mintNFT(_company);
             tokenContract.mint(_company, savings);            // mint tokens corresponding to negative CO2 surplus
             emit EmissionReportReceived(_company, savings, true);
         } else {
@@ -161,7 +161,7 @@ contract AllowanceContract is AccessControl {
             if (_amount >= _excess) {
                 tokenContract.burn(_company, _excess);
                 companies[_company].trackedCO2 = companies[_company].allowance;
-                certContract.mint(_company);
+                certContract.mintNFT(_company);
                 emit EmissionReportReceived(_company, 0, true);
             } else {
                 revert("Insufficient tokens to offset excess");

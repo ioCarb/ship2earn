@@ -143,6 +143,10 @@ library Pairing {
     }
 }
 
+interface IAllowanceContract {
+    function emissionReport(uint256 _vehicleID, address _company, uint256 _trackedCO2) external;
+}
+
 contract Verifier {
     using Pairing for *;
     struct KZGVerifierKey {
@@ -172,33 +176,41 @@ contract Verifier {
     }
     function verifierKey() internal pure returns (VerifierKey memory vk) {
         vk.index_comms = new Pairing.G1Point[](6);
-        vk.index_comms[0] = Pairing.G1Point(0x2f4b3dac7a1c00b7d817e7bf23e5fb4fb25877d175abc94d054aa78067bacd1b, 0x00bf2781075e2c1ba21c68227135cea2c016e78be5c397dc4831c0590485262d);
-        vk.index_comms[1] = Pairing.G1Point(0x2589da5ab3ff7af82e1e628b3094e60df764029d0744877fa6cf05e1791b48fc, 0x2bdcbab20f36a2d0e908d977dabce7fb84a2ab3b436d76ab3f27a31e17359f61);
-        vk.index_comms[2] = Pairing.G1Point(0x288b9ccb84e78fd10de3afe728a0bec25996585da5fd9866a2f232216e8783cc, 0x0820b809dfd64ed4646ec83b1e26957046572a3cfe7fa4b3552a4891121984aa);
-        vk.index_comms[3] = Pairing.G1Point(0x2a69d8287903ca5edfcdd5d8a99d410a99d981e95c73806cde7687401349d550, 0x1d33caf3e0ecb771d3836811f0adae547eb7bda0406746b68792d6aca7fdadea);
-        vk.index_comms[4] = Pairing.G1Point(0x0886d70d2713386d45e36df779c6e8110726758817d25f023624883c337d47e8, 0x2dc3d170ef8e4bf1b8ab6919ff0b9ea164156391379e17f39e9913e1e56e408a);
-        vk.index_comms[5] = Pairing.G1Point(0x23eb07e9c7eec41cef18ea312f0453771537d66d175ad444f81a02de932a61a2, 0x0d336a04c5b2c957e57a4cc5209b2a7031d6a902a3494310c445f8a53eac9346);
-        vk.vk.g = Pairing.G1Point(0x204ceb2df6d69490ac76644e5af19608d0a454d5c474e32abba3b86763cfff28, 0x236ed02eb17e6c3c0f7723c7e14bc55c1e9e2c0643b25bbda5cb267f9e864c5c);
-        vk.vk.gamma_g = Pairing.G1Point(0x1d5122584d1d76756250b3312c9887e6ffd65f9bea29d0e9fd8a2df654f35bd8, 0x1596209b740e6ba0de15101d38b680ebe0fbe4da9172c993b82bf5c033b84bf8);
-        vk.vk.h = Pairing.G2Point([0x0d816ded16991cf4c6b1791b9212d9c6b793aa82c4e288a78e29f0761e1210a3, 0x1a33d591068f324717c5958a94124ab60c1f9096567ee130904f8035931bdc26], [0x2402293d9a306e0dd973cd7325331e48f7703807990847162badf3036c6dbcf5, 0x26a62b703d06c9b8fc728796ee5349467ee9686013d7c340d727b8e48fbbcc5c]);
-        vk.vk.beta_h = Pairing.G2Point([0x0b737d870964c24edaa68ca994b69a18c1d56e4beec6e2e2af765507c54672e1, 0x22b88262c03836a0c56e0cf0d2792a7630f1c063c7f2ebaa897abd149cc65e3c], [0x20debd744ce69f1a9a6b0593783c0c695f6cda0790d2b8bfc51041bfb27a9a34, 0x1ff48789f785f8025e0a97c024e718b001d348edd2511d2dd6614b6e2aae1cff]);
-        vk.g1_shift = Pairing.G1Point(0x15fbaae4030391d950b5079456b83cfc1472c96e8284bc930da5db4c1b5465eb, 0x2f2bdd47328ad7c099263ab4393c0111af9c4cc127427723be97693402fd9f18);
-        vk.g2_shift = Pairing.G1Point(0x099d53b83c4d95fdc137d7b0337366172acca637ee08bfecfb68871867c5eb52, 0x2d0c2d68af4f000f0bb5f3c3b2b35f167b79a547645517e59924dff48603b828);
+        vk.index_comms[0] = Pairing.G1Point(0x0c7171f2a7983ed7faa08701eed7c8517ed23145dee4d7b5fb14406adc78fc2b, 0x0995986dd23e41b6d1dbb651a02e11210823839ac003bdd50d4aa2a085e9b068);
+        vk.index_comms[1] = Pairing.G1Point(0x26402547211cf19fd18bf9e0637f44ecb10032f63ca2570185755d48716ce25d, 0x0fa5edc980d022f34a771fd511e463e8faf02d1885f4ec05aa00446c3420a3d2);
+        vk.index_comms[2] = Pairing.G1Point(0x1da398985a00be74be74449539ae4170d11e66c2e358282599b9d0d9b5ed9cc1, 0x0f25f17f45e01f582d0e2d061574ef4121bc908450741158ebe0efd70c38aa3d);
+        vk.index_comms[3] = Pairing.G1Point(0x10ffb52625b8a7a75f776d628e227b30b65f726de1b63166409984afb8f38047, 0x0c19d5d7887108be4b1060037cdd1d88f04e8cc577b03e3a5c431e2b7fc8b7b2);
+        vk.index_comms[4] = Pairing.G1Point(0x088bca88849c2e7db3827fe74b4766a24a81ea5e516c20f95c2f44c17c73fc87, 0x2ac3f996a77a78869d0f0f7d400a5c5f6e11a56b1cc650b58b486f4f7e0f05bf);
+        vk.index_comms[5] = Pairing.G1Point(0x06aa6f8f11a54697f613aa9c701310631433512b572e7e6fa8bf53f7d37445fb, 0x1295068c0754d657c18ee40697a02061c70289a9c6d63c7f2def206316c6c5fc);
+        vk.vk.g = Pairing.G1Point(0x1c20e09a3064b87d45e7486dd6bf20e9e2cc676160e0918190cc32a45710d2a1, 0x200b3352ad22e325d6929e47877d3ade253d3fb94f8f04f6a6a8bd88582bc656);
+        vk.vk.gamma_g = Pairing.G1Point(0x2b8e7070604e198b63d333436ad0012749ef2a93ad123e1ec7b4188532462207, 0x1f1ef22ab206fe62e5a06c56dec38aafe436b3600f76ed829bacb9012d3868f5);
+        vk.vk.h = Pairing.G2Point([0x0341b66339c475a1ac03350f48965771af3c6ac2bf2db11be0567b8ba6018396, 0x1d4abe9bcc59b4247008a81f689c1797faa9a2c62360b0e130a3fec8501eb3fe], [0x2460dc96f8fd7279bc142c3c6b01cbca1396912a0c585120eef8c239c1e74564, 0x16ce014a0d93445c9493a6dbfd3c95f0b4b93da133bdaf06ae3e6a4991d663d4]);
+        vk.vk.beta_h = Pairing.G2Point([0x17899c6878aeed2f6ca94b35874174fdc3c6c680addc5a14f5aa1f677297e36d, 0x2b5c6794701a53844167d05710aea9052b2324f8fbed763865e7cba825db2173], [0x0b32dfb3f4fe48d20a0139d8ca6ef05991275ff43c4c5dd77b8ecfb1eca3f230, 0x2c493de56fef568e58b2bb6d5c7444a71f175193e076dca3ede6aa23ac6f004a]);
+        vk.g1_shift = Pairing.G1Point(0x265142f436ef67ff1ef469540cc84d49fb17c5308d1d21456debfcbc02815881, 0x0c248841c4d43d196197d29f4386484536c4c318492768d54aed380cadbc366c);
+        vk.g2_shift = Pairing.G1Point(0x254690bb3bc364a74e534020582d0d40527eeadd51b744ad4710b55f48c1591d, 0x07926c829348dac5a61d72728cccae17fa0fb78a75824553134b50df09d089e1);
+    }
+
+    IAllowanceContract private allowanceContract;
+    constructor(address _AllowanceAddress) {
+        allowanceContract = IAllowanceContract(_AllowanceAddress);
     }
     event Verified(bool r);
-    function verifyTx(Proof memory proof, uint256[111] memory input) public returns (bool) {
 
-        uint256[127] memory input_padded;
+    function verifyTx(Proof memory proof, uint256[24] memory input) public returns (bool) {
+
+        uint256[31] memory input_padded;
         for (uint i = 0; i < input.length; i++) {
             input_padded[i] = input[i];
         }
-
-        emit Verified(verifyTxAux(input_padded, proof));
-
-        return verifyTxAux(input_padded, proof);
+        bool success = verifyTxAux(input_padded, proof);
+        if (success) {
+            allowanceContract.emissionReport(input[21], address(uint160(input[22])), input[23]);
+            emit Verified(success);
+        }
+        return success;
     }
 
-    function verifyTxAux(uint256[127] memory input, Proof memory proof) internal view returns (bool) {
+    function verifyTxAux(uint256[31] memory input, Proof memory proof) internal view returns (bool) {
         VerifierKey memory vk = verifierKey();
         for (uint i = 0; i < input.length; i++) {
             require(input[i] < 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
@@ -207,33 +219,33 @@ contract Verifier {
         uint32 ctr;
         {
             bytes32[25] memory init_seed;
-            init_seed[0] = 0x4d41524c494e2d32303139a9651b0000000000a9651b0000000000f463380100;
-            init_seed[1] = 0x0000001bcdba6780a74a054dc9ab75d17758b24ffbe523bfe717d8b7001c7aac;
-            init_seed[2] = 0x3d4b2f2d26850459c03148dc97c3e58be716c0a2ce357122681ca21b2c5e0781;
-            init_seed[3] = 0x27bf000000000000000000000000000000000000000000000000000000000000;
+            init_seed[0] = 0x4d41524c494e2d32303139d570010000000000d570010000000000c1982c0000;
+            init_seed[1] = 0x0000002bfc78dc6a4014fbb5d7e4de4531d27e51c8d7ee0187a0fad73e98a7f2;
+            init_seed[2] = 0x71710c68b0e985a0a24a0dd5bd03c09a83230821112ea051b6dbd1b6413ed26d;
+            init_seed[3] = 0x9895090000000000000000000000000000000000000000000000000000000000;
             init_seed[4] = 0x0000000000010000000000000000000000000000000000000000000000000000;
-            init_seed[5] = 0x000000000001fc481b79e105cfa67f8744079d0264f70de694308b621e2ef87a;
-            init_seed[6] = 0xffb35ada8925619f35171ea3273fab766d433baba284fbe7bcda77d908e9d0a2;
-            init_seed[7] = 0x360fb2badc2b0000000000000000000000000000000000000000000000000000;
+            init_seed[5] = 0x0000000000015de26c71485d75850157a23cf63200b1ec447f63e0f98bd19ff1;
+            init_seed[6] = 0x1c2147254026d2a320346c4400aa05ecf485182df0fae863e411d51f774af322;
+            init_seed[7] = 0xd080c9eda50f0000000000000000000000000000000000000000000000000000;
             init_seed[8] = 0x0000000000000000010000000000000000000000000000000000000000000000;
-            init_seed[9] = 0x000000000000000001cc83876e2132f2a26698fda55d589659c2bea028e7afe3;
-            init_seed[10] = 0x0dd18fe784cb9c8b28aa84191291482a55b3a47ffe3c2a57467095261e3bc86e;
-            init_seed[11] = 0x64d44ed6df09b820080000000000000000000000000000000000000000000000;
+            init_seed[9] = 0x000000000000000001c19cedb5d9d0b999252858e3c2661ed17041ae39954474;
+            init_seed[10] = 0xbe74be005a9898a31d3daa380cd7efe0eb581174508490bc2141ef7415062d0e;
+            init_seed[11] = 0x2d581fe0457ff1250f0000000000000000000000000000000000000000000000;
             init_seed[12] = 0x0000000000000000000000010000000000000000000000000000000000000000;
-            init_seed[13] = 0x00000000000000000000000150d54913408776de6c80735ce981d9990a419da9;
-            init_seed[14] = 0xd8d5cddf5eca037928d8692aeaadfda7acd69287b6466740a0bdb77e54aeadf0;
-            init_seed[15] = 0x116883d371b7ece0f3ca331d0000000000000000000000000000000000000000;
+            init_seed[13] = 0x0000000000000000000000014780f3b8af8499406631b6e16d725fb6307b228e;
+            init_seed[14] = 0x626d775fa7a7b82526b5ff10b2b7c87f2b1e435c3a3eb077c58c4ef0881ddd7c;
+            init_seed[15] = 0x0360104bbe087188d7d5190c0000000000000000000000000000000000000000;
             init_seed[16] = 0x0000000000000000000000000000010000000000000000000000000000000000;
-            init_seed[17] = 0x000000000000000000000000000001e8477d333c882436025fd2178875260711;
-            init_seed[18] = 0xe8c679f76de3456d3813270dd786088a406ee5e113999ef3179e3791631564a1;
-            init_seed[19] = 0x9e0bff1969abb8f14b8eef70d1c32d0000000000000000000000000000000000;
+            init_seed[17] = 0x00000000000000000000000000000187fc737cc1442f5cf9206c515eea814aa2;
+            init_seed[18] = 0x66474be77f82b37d2e9c8488ca8b08bf050f7e4f6f488bb550c61c6ba5116e5f;
+            init_seed[19] = 0x5c0a407d0f0f9d86787aa796f9c32a0000000000000000000000000000000000;
             init_seed[20] = 0x0000000000000000000000000000000000010000000000000000000000000000;
-            init_seed[21] = 0x000000000000000000000000000000000001a2612a93de021af844d45a176dd6;
-            init_seed[22] = 0x37157753042f31ea18ef1cc4eec7e907eb234693ac3ea5f845c4104349a302a9;
-            init_seed[23] = 0xd631702a9b20c54c7ae557c9b2c5046a330d0000000000000000000000000000;
+            init_seed[21] = 0x000000000000000000000000000000000001fb4574d3f753bfa86f7e2e572b51;
+            init_seed[22] = 0x3314631013709caa13f69746a5118f6faa06fcc5c6166320ef2d7f3cd6c6a989;
+            init_seed[23] = 0x02c76120a09706e48ec157d654078c0695120000000000000000000000000000;
             init_seed[24] = 0x0000000000000000000000000000000000000000010000000000000000000000;
             bytes21 init_seed_overflow = 0x000000000000000000000000000000000000000001;
-            uint256[127] memory input_reverse;
+            uint256[31] memory input_reverse;
             for (uint i = 0; i < input.length; i++) {
                 input_reverse[i] = be_to_le(input[i]);
             }
@@ -272,7 +284,7 @@ contract Verifier {
         {
             uint256 f;
             (f, ctr) = sample_field(fs_seed, ctr);
-            while (eval_vanishing_poly(f, 2097152) == 0) {
+            while (eval_vanishing_poly(f, 131072) == 0) {
                 (f, ctr) = sample_field(fs_seed, ctr);
             }
             challenges[0] = montgomery_reduction(f);
@@ -310,7 +322,7 @@ contract Verifier {
         {
             uint256 f;
             (f, ctr) = sample_field(fs_seed, ctr);
-            while (eval_vanishing_poly(f, 2097152) == 0) {
+            while (eval_vanishing_poly(f, 131072) == 0) {
                 (f, ctr) = sample_field(fs_seed, ctr);
             }
             challenges[4] = montgomery_reduction(f);
@@ -360,20 +372,20 @@ contract Verifier {
             intermediate_evals[0] = eval_unnormalized_bivariate_lagrange_poly(
                     challenges[0],
                     challenges[4],
-                    2097152
+                    131072
             );
-            intermediate_evals[1] = eval_vanishing_poly(challenges[0], 2097152);
-            intermediate_evals[2] = eval_vanishing_poly(challenges[4], 2097152);
-            intermediate_evals[3] = eval_vanishing_poly(challenges[4], 128);
+            intermediate_evals[1] = eval_vanishing_poly(challenges[0], 131072);
+            intermediate_evals[2] = eval_vanishing_poly(challenges[4], 131072);
+            intermediate_evals[3] = eval_vanishing_poly(challenges[4], 32);
 
             {
-                uint256[128] memory lagrange_coeffs = eval_all_lagrange_coeffs_x_domain(challenges[4]);
+                uint256[32] memory lagrange_coeffs = eval_all_lagrange_coeffs_x_domain(challenges[4]);
                 intermediate_evals[4] = lagrange_coeffs[0];
                 for (uint i = 1; i < lagrange_coeffs.length; i++) {
                     intermediate_evals[4] = addmod(intermediate_evals[4], mulmod(lagrange_coeffs[i], input[i-1], 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
                 }
             }
-            intermediate_evals[5] = eval_vanishing_poly(challenges[5], 33554432);
+            intermediate_evals[5] = eval_vanishing_poly(challenges[5], 4194304);
 
             {
                 // beta commitments: g_1, outer_sc, t, z_b
@@ -441,7 +453,7 @@ contract Verifier {
                     }
                     {
                         uint256 b_poly_coeff = mulmod(challenges[5], proof.evals[1], 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
-                        b_poly_coeff = addmod(b_poly_coeff, mulmod(proof.evals[2], inverse(33554432), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
+                        b_poly_coeff = addmod(b_poly_coeff, mulmod(proof.evals[2], inverse(4194304), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
                         inner_sc_coeffs[3] = mulmod(b_poly_coeff, submod(0, mulmod(challenges[4], challenges[0], 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
                         inner_sc_coeffs[4] = mulmod(b_poly_coeff, challenges[0], 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
                         inner_sc_coeffs[5] = mulmod(b_poly_coeff, challenges[4], 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
@@ -589,10 +601,10 @@ contract Verifier {
         uint256 tmp = submod(eval_vanishing_poly(x, domain_size), eval_vanishing_poly(y, domain_size), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
         return mulmod(tmp, inverse(submod(x, y, 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001)), 0x30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001);
     }
-    function eval_all_lagrange_coeffs_x_domain(uint256 x) internal view returns (uint256[128] memory){
-        uint256[128] memory coeffs;
-        uint256 domain_size = 128;
-        uint256 root = 0x16e73dfdad310991df5ce19ce85943e01dcb5564b6f24c799d0e470cba9d1811;
+    function eval_all_lagrange_coeffs_x_domain(uint256 x) internal view returns (uint256[32] memory){
+        uint256[32] memory coeffs;
+        uint256 domain_size = 32;
+        uint256 root = 0x09c532c6306b93d29678200d47c0b2a99c18d51b838eeb1d3eed4c533bb512d0;
         uint256 v_at_x = eval_vanishing_poly(x, domain_size);
         uint256 root_inv = inverse(root);
         if (v_at_x == 0) {

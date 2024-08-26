@@ -29,6 +29,16 @@ async function burnTokens(CarbTokenAddress, company, amount, signers) {
     console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
 }
 
+async function increaseVehicleCount(AllowanceContractAddress, company, signers) {
+    const chalk = (await import('chalk')).default;
+    const AllowanceContract = await ethers.getContractAt("AllowanceContract", AllowanceContractAddress, signers[0]);
+    const tx = await AllowanceContract.increaseVehicleCount(company);
+    console.log(`Transaction hash: ${tx.hash}`);
+    receipt = await tx.wait();
+    console.log(`Transaction confirmed in block: ${receipt.blockNumber}`);
+    console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
+}
+
 async function main() {
     const signers = await ethers.getSigners();
     const DeviceRegistryAddress = process.env.DEVICEREGISTRY_ADDRESS;
@@ -36,6 +46,7 @@ async function main() {
     const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
     //await mintTokens(CarbTokenAddress, process.env.B_ADDRESS_TESTNET, 900, signers);
     //await burnTokens(CarbTokenAddress, process.env.ADDRESS_COMPANY_D, 1900, signers);
+    await increaseVehicleCount(AllowanceContractAddress, process.env.COMPANY_ADDRESS_TESTNET, signers);
 }
 
 main()

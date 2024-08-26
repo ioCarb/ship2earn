@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { ethers } = require("hardhat")
 
 async function setAccessInDeviceRegistry(DeviceRegistryAddress, AllowanceContractAddress, signers) {
   const chalk = (await import('chalk')).default;
@@ -14,7 +15,7 @@ async function setAccessInDeviceRegistry(DeviceRegistryAddress, AllowanceContrac
   console.log(chalk.red(`Gas used: ${receipt.gasUsed.toString()}`));
 }
 
-async function setAccessInAllowanceContract(AllowanceContractAddress, VerifierContractAddress, DeviceRegistryAddress, CarbTokenAddress, signers) {
+async function setAccessInAllowanceContract(AllowanceContractAddress, VerifierContractAddress, DeviceRegistryAddress, CarbTokenAddress, CertContractAddress, signers) {
   const chalk = (await import('chalk')).default;
   const Contract = await ethers.getContractAt("AllowanceContract", AllowanceContractAddress, signers[0]);
   Contract.on("verifierRoleSet", (address) => {
@@ -87,10 +88,7 @@ async function setAccessInCarbToken(CarbTokenAddress, AllowanceContractAddress, 
 
 async function setAccessInCertContract(CertContractAddress, AllowanceContractAddress, signers) {
   const chalk = (await import('chalk')).default;
-  const Contract = await ethers.getContractAt("CertContract", CertContractAddress, signers[0]);
-  Contract.on("minterRoleSet", (address) => {
-    console.log(chalk.green(`Event: Minter Role set for ${address}.`));
-  });
+  const Contract = await ethers.getContractAt("CarbCertificate", CertContractAddress, signers[0]);
   const tx = await Contract.setMinter(AllowanceContractAddress);
   // -> Gas used:
   console.log(`Transaction hash: ${tx.hash}`);
@@ -106,10 +104,11 @@ async function main() {
   const VerifierContractAddress = process.env.DIST_VERIFIER_CONTRACT_ADDRESS;
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
   const DeviceRegistryAddress = process.env.DEVICEREGISTRY_ADDRESS;
+  const CertContractAddress = process.env.CRBCERT_ADDRESS;
   // sets the allowance contract address within the DeviceRegistry contract:
   await setAccessInDeviceRegistry(DeviceRegistryAddress, AllowanceContractAddress, signers);
   // sets the access roles and addresses within the AllowanceContract:
-  await setAccessInAllowanceContract(AllowanceContractAddress, VerifierContractAddress, DeviceRegistryAddress, CarbTokenAddress, signers)
+  await setAccessInAllowanceContract(AllowanceContractAddress, VerifierContractAddress, DeviceRegistryAddress, CarbTokenAddress, CertContractAddress, signers)
   // sets the minter burner role within the carb token contract:
   await setAccessInCarbToken(CarbTokenAddress, AllowanceContractAddress, signers);
   // sets the minter burner role within the CertContract:

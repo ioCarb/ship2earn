@@ -58,10 +58,10 @@ async function main() {
     const signer = signers[0]; // must be OPERATOR (default is admin)
     
     // reset company data after reporting and allowance logic is done
-    //await resetCompanyData(AllowanceContractAddress, company = process.env.COMPANY_ADDRESS_TESTNET, signer);
+    await resetCompanyData(AllowanceContractAddress, company = process.env.COMPANY_ADDRESS_TESTNET, signer);
 
     // adjust allowance for a company
-    //await adjustAllowance(AllowanceContractAddress, company = process.env.COMPANY_ADDRESS_TESTNET, 30000, signer);
+    //await adjustAllowance(AllowanceContractAddress, company = process.env.COMPANY_ADDRESS_TESTNET, 28390, signer);
 
     // unregister a device
     //await unregisterDevice(DeviceRegistryAddress, deviceID = 9876, signer);
