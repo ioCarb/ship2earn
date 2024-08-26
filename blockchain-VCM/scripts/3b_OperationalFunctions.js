@@ -19,17 +19,17 @@ async function getNFTData(CarbCertificateAddress, tokenId, signer) {
     console.log(`NFT ${tokenId} data: ${data}`);
 }
 
-async function tokensOfOwner(CarbCertificateAddress, signer) {
+async function tokensOfOwner(CarbCertificateAddress, CompanyAddress, signer) {
     const chalk = (await import('chalk')).default;
     const CarbCertificate = await ethers.getContractAt('CarbCertificate', CarbCertificateAddress, signer);
-    const data = await CarbCertificate.tokensOfOwner(signer.address);
+    const data = await CarbCertificate.tokensOfOwner(CompanyAddress);
     console.log(`Available NFT tokens: ${data}`);
     return data;
 }
 
-async function balanceOf(CarbTokenAddress, signer) {
+async function balanceOf(CarbTokenAddress, CompanyAddress, signer) {
     const CarbToken = await ethers.getContractAt("CarbToken", CarbTokenAddress, signer);
-    const balance = await CarbToken.balanceOf(signer.address);
+    const balance = await CarbToken.balanceOf(CompanyAddress);
     console.log(`Balance of ${signer.address}: ${balance}`);
 }
 
@@ -39,12 +39,12 @@ async function main() {
     const AllowanceContractAddress = process.env.ALLOWANCECONTRACT_ADDRESS;
     const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
     const CarbCertificateAddress = process.env.CRBCERT_ADDRESS;
+    const CompanyAddress = process.env.COMPANY_ADDRESS_TESTNET;
     // adjust signer to company that wants to offset excess
-    const signer = signers[0];
-    await balanceOf(CarbTokenAddress, signer);
-    //await offsetExcess(AllowanceContractAddress, signer);
-    const data = await tokensOfOwner(CarbCertificateAddress, signer);
-    await getNFTData(CarbCertificateAddress, data[0], signer);
+    await balanceOf(CarbTokenAddress, CompanyAddress, signers[0]);
+    //await offsetExcess(AllowanceContractAddress, signers[0]);
+    const data = await tokensOfOwner(CarbCertificateAddress, CompanyAddress, signers[0]);
+    await getNFTData(CarbCertificateAddress, data[data.length - 1], signers[0]);
 }
 
 main()
