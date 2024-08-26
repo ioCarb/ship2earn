@@ -38,11 +38,12 @@ async function main() {
   const DeviceRegistryAddress = process.env.DEVICEREGISTRY_ADDRESS;
   const AllowanceContractAddress = process.env.ALLOWANCECONTRACT_ADDRESS;
   const CarbTokenAddress = process.env.CARBTOKEN_ADDRESS;
+  CarbCertificateAddress = process.env.CRBCERT_ADDRESS;
   await getCompanyStats(AllowanceContractAddress, company=process.env.COMPANY_ADDRESS_TESTNET, signers);
   //await getDevicesByWallet(DeviceRegistryAddress, wallet=process.env.COMPANY_ADDRESS_TESTNET, signers);
   //await getDeviceData(DeviceRegistryAddress, deviceID=69, signers);
   //await getVehicleData(DeviceRegistryAddress, vehicleID=1234, signers);
-  await getNFTData(CarbCertificateAddress, tokenId=0, signers);
+  //await getNFTData(CarbCertificateAddress, tokenId=0, signers);
 }
 
 main()
