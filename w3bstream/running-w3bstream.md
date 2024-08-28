@@ -2,6 +2,8 @@
 
 ## "integrate" zokrates-sprout
 
+[zokrates-sprout](https://github.com/ioCarb/zokrates-sprout) is an additional zksnark mechanism for w3bstream using ZoKrates developed by us.
+
 when you're in the the parent folder of w3bstream run:
 
 ```bash
