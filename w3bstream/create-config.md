@@ -26,4 +26,4 @@ to make w3bstream send the proof to the previously defined smart contract change
   }
 }
 ```
-
+the abi field doesn't matter for now as the `zokrates-sprout` service reads the abi from file system which, thus the abi needs to copied in your `zokrates-sprout` folder.
