@@ -9,4 +9,4 @@
 	- [creating a config](w3bstream/create-config.md)
 	- [running w3bstream](w3bstream/running-w3bstream.md)
 	- [sending data to w3bstream](w3bstream/sending-data.md)
-- [Interacting with the blockchain](./blockchain/README.md)
+- [Interacting with the blockchain](./blockchain-VCM/README.md)
