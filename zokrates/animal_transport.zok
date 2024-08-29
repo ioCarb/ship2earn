@@ -1,12 +1,21 @@
+/*
+Import necessary modules and libraries for cryptographic operations and BabyJubJub curve parameters
+*/
 from "ecc/babyjubjubParams" import BabyJubJubParams;
 import "signatures/verifyEddsa.zok" as verifyEddsa;
 import "ecc/babyjubjubParams.zok" as context;
 
-
+/*
+Main function definition. It takes in cryptographic parameters (R, S, A, M0, M1) 
+and arrays of environmental data (temp, hum, speed, acceleration) along with a boolean array (hasmoved).
+*/
 def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,field[300] temp, field[300] hum,field[300] speed,field[300] acceleration,bool[300] hasmoved) -> field {
+    // Initialize BabyJubJub parameters for the context
     BabyJubJubParams context = context();
+    // Verify the EdDSA signature using the provided cryptographic parameters
 	assert(verifyEddsa(R, S, A, M0, M1, context));
     log("signature {} is verified",S);
+    // Initialize the score and other variables used in calculations
     u32 mut score = 0;
     field mut sum_temp = 0;
     field mut sum_hum = 0;
@@ -14,36 +23,46 @@ def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,field[300] temp, 
     field mut sum_speed_moving = 0;
     bool mut is_speed = true;
     bool mut is_acc = true;
+    // Loop through all the 300 data points
     for u32 i in 0..300 {
+        // Sum up the temperature and humidity values
        sum_temp = sum_temp + temp[i];
        sum_hum = sum_hum + hum[i];
-
+        // Accumulate the speed for periods when the device was moving
        sum_speed_moving = if hasmoved[i] {sum_speed_moving + speed[i]} else {sum_speed_moving};
+       // Check if the speed is compliant (<= 130) for all data points
        is_speed = if speed <= 130 {is_speed} else {false};
+       // Check if the acceleration is within the compliant range [-2, 2]
        is_acc =  if acceleration <=2 && acceleration >= -2 {is_acc} else {false} ;
+       // Count the number of pauses (when the device was not moving)
        sum_pause = if hasmoved[i] {sum_pause} else {sum_pause +1}; 
     }
+    // Calculate the average temperature, speed while moving, humidity, and pause time
+    field avg_temp = sum_temp / 300;
     field avg_temp = sum_temp/total;
     field avg_speed_moving = sum_speed_moving/(300-sum_pause);
     field avg_hum = sum_hum/300;
     field avg_pause = sum_pause/300;
+    // Loop again to calculate the variance of the speed while moving
     field mut sum_of_squares = 0;
-    for u31 i in 0..300 {
+    for u32 i in 0..300 {
        sum_of_squares = if hasmoved[i] {sum_of_squares + (speed[i]-avg_speed_moving)*(speed[i]-avg_speed_moving)} else {sum_of_squares};
     }
+    // Calculate the variance of the speed while moving
     field var_speed_moving = sum_of_squares/(n-sum_pause);
-
-    score = if avg_temp > 5 && avg_temp < 30 {score +1} else {score} ;
-    score = if avg_hum > 40 && avg_hum < 70 {score +1} else {score};
-    score = if avg_hum < 15 {score +1} else {score};
-    score = if avg_pause > (1/6) {score +1} else {score};
-    score = if  is_safe  {score +1} else {score};
-    score = if  is_acc  {score +1} else {score};
+    // Score calculation based on specific conditions
+    score = if avg_temp > 5 && avg_temp < 30 {score +1} else {score} ; // Temperature range check
+    score = if avg_hum > 40 && avg_hum < 70 {score +1} else {score}; // Humidity range check
+    score = if avg_hum < 15 {score +1} else {score}; //Speed variance check
+    score = if avg_pause > (1/6) {score +1} else {score}; //Pause duration check
+    score = if  is_safe  {score +1} else {score}; //Speed compliance check
+    score = if  is_acc  {score +1} else {score}; //Acceleration compliance check
     
 
 
-
+    // Log the final score
     log("score is {}", score);
+    // Return the final score
     return score;
 }
 

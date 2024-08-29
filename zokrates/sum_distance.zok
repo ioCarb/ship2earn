@@ -1,3 +1,6 @@
+/*
+Import necessary modules for elliptic curve operations, signature verification, bitwise operations,type casting, and hashing.
+*/
 from "ecc/babyjubjubParams" import BabyJubJubParams;
 import "signatures/verifyEddsa.zok" as verifyEddsa;
 import "ecc/babyjubjubParams.zok" as context;
@@ -6,49 +9,75 @@ import "utils/casts/u32_from_bits" as u32_from_bits;
 import "utils/casts/u8_to_field" as u8_to_field;
 import "hashes/sha3/512bit.zok" as sha512;
 
-
+/*
+Function to convert a 4-byte unsigned integer (u8[4]) into a 32-bit boolean array
+*/
 def getbits(u8[4] chunk)->bool[32]{
+    // Initialize a 4x8 array to store the bit representation of each byte
     bool[4][8] mut res =[[false;8];4];
+    // Initialize a 32-bit boolean array to store the final result
     bool[32] mut result = [false;32];
+    // Convert each byte in the chunk to its bit representation and store it in `res`
     for u32 i in 0..4{
          res[i] = u8_to_bits(chunk[i]);
     }
-
+    // Flatten the 4x8 array into a single 32-bit array and return it
     return [...res[0],...res[1],...res[2],...res[3]];
 }
-
+/*
+ Function to assert that the SHA-512 hash of the input matches the provided hash (M0, M1)
+*/
 def asserthash(u32[8] M0,u32[8] M1,u8[722] input) -> bool {
+    // Log the input data
     log("input bytes {}",input);
+    // Compute the SHA-512 hash of the input
     u8[64] mut hash512 = sha512(input);
+    // Log the 512-bit hash
     log("512hash {}",hash512);
+    // Initialize an array to store the hash as 32-bit unsigned integers
     u32[16] mut hash_u32 = [0;16];
+    // Convert the 512-bit hash from bytes to u32 by processing each 4-byte chunk
     for u32 i in 0..16{
+        // Extract a 4-byte chunk from the hash
         u8[4] current_chunks = hash512[i*4..(i+1)*4];
+        // Convert the 4-byte chunk into a 32-bit boolean array
         bool[32] chunk_bits = getbits(current_chunks);
+        // Convert the 32-bit boolean array into a u32 and store it in hash_u32
         hash_u32[i] = u32_from_bits(chunk_bits);
     }
+    // Log the hash as u32 chunks
     log("512hash u32 chanks {} ",hash_u32);
     
-
+// Check if the first 8 u32s of the computed hash match M0 and the next 8 match M1
 return (M0 == hash_u32[0..8]) && (M1 == hash_u32[8..16]);
 }
 
-//device id, wallet address
+/*
+Main function that verifies a signature and computes a result based on input data
+*/
 def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,private u8[720] dist,private u8 typ,private u8 deviceid,private field walletadrr) -> field[3] {
+    // Concatenate the dist array, typ, and deviceid into a single input array
     u8[722] input = [...dist,typ,deviceid];
+    // Verify that the SHA-512 hash of the input matches M0 and M1
     bool isassert = asserthash(M0,M1,input);
-    log("assert? : {}",isassert);
+    // Ensure that the hash assertion passed
     assert(isassert);
+    // Initialize the elliptic curve parameters for signature verification
     BabyJubJubParams context = context();
+    // Verify the EDDSA signature using the provided public key (A), signature (S), message hash components (M0, M1), and BabyJubJub context
 	assert(verifyEddsa(R, S, A, M0, M1, context));
     log("signature {} is verified",S);
+    // Initialize a variable to sum up the distance values
     field mut sum = 0;
+    // Loop through the dist array and accumulate the sum of the distances
     for u32 i in 0..720 {
        sum = sum + u8_to_field(dist[i]);
     }
-    
+    // Log the type (typ) of data processed
     log("factor is {}",typ);
+    // Log the sum of the distances
     log("sum is {}", sum);
+    // Return an array containing the device ID, wallet address, and the product of the sum with the type
     return [u8_to_field(deviceid),walletadrr,sum*u8_to_field(typ)];
 }
 

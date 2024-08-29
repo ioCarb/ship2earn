@@ -1,25 +1,40 @@
+/* 
+Import BabyJubJub elliptic curve parameters and EDDSA signature verification function
+*/
 from "ecc/babyjubjubParams" import BabyJubJubParams;
 import "signatures/verifyEddsa.zok" as verifyEddsa;
 import "ecc/babyjubjubParams.zok" as context;
 
-//device id, wallet address
+/* Main function that takes elliptic curve signature parameters, message hash components,
+ distances (dist), types (typ), and a wallet address as input and returns a field array
+containing the wallet address and a calculated total value.*/
 def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1,private field[2160] dist,private field[2160] typ,private field walletadrr) -> field[2] {
+    // Initialize the BabyJubJub curve parameters
     BabyJubJubParams context = context();
+    // Verify the EDDSA signature with the provided public key (A), signature (S),message hash components (M0, M1), and the BabyJubJub context.
 	assert(verifyEddsa(R, S, A, M0, M1, context));
+    // Log a message indicating the signature has been verified successfully
     log("signature {} is verified",S);
+    // Initialize variables to accumulate sums based on different types
     field mut sum1 = 0;
     field mut sum2 = 0;
     field mut sum3 = 0;
     field mut total= 0;
-    
+    // Loop over all 2160 elements of the input arrays
     for u32 i in 0..2160 {
+        // Accumulate sum1 for type 1 distances
        sum1 = if (typ[i] == 1) {sum1 + dist[i]} else {sum1};
+       // Accumulate sum2 for type 2 distances
        sum2 = if (typ[i] == 2) {sum2 + dist[i]} else {sum2};
+    // Accumulate sum3 for type 3 distances (Note: This line checks for type 1 again, which might be a mistake; perhaps it should check for typ[i] == 3)
        sum3 = if (typ[i] == 1) {sum3 + dist[i]} else {sum3};
     }
+    // Calculate the total value as a weighted sum of sum1, sum2, and sum3
     total = sum1*1+sum2*2+sum3*3;
+    // Log the type array and the total calculated sum
     log("factor is {}",typ);
     log("sum is {}", total);
+    // Return an array containing the wallet address and the calculated total value
     return [walletadrr,total];
 }
 

@@ -1,3 +1,6 @@
+/*
+Import necessary libraries and modules
+*/
 from "ecc/babyjubjubParams" import BabyJubJubParams;
 import "signatures/verifyEddsa.zok" as verifyEddsa;
 import "ecc/babyjubjubParams.zok" as context;
@@ -7,22 +10,32 @@ import "utils/casts/u32_from_bits" as u32_from_bits;
 import "utils/casts/u8_to_field" as u8_to_field;
 
 
-
+/* This function converts a 4-byte array (u8[4]) into a 32-bit boolean array (bool[32])
+*/
 def getbits(u8[4] chunk)->bool[32]{
+    // Initialize a 2D array for intermediate storage of bits
     bool[4][8] mut res =[[false;8];4];
+    // Initialize the final result array
     bool[32] mut result = [false;32];
+    // Loop over each byte and convert it to bits
     for u32 i in 0..4{
          res[i] = u8_to_bits(chunk[i]);
     }
-
+    // Flatten the 2D array into a single 32-bit array
     return [...res[0],...res[1],...res[2],...res[3]];
 }
-
+/*
+ This function verifies that the SHA-512 hash of the input matches the provided M0 and M1 values
+ */
 def asserthash(u32[8] M0,u32[8] M1,u8[721] input) -> bool {
+    // Log the input bytes for debugging purposes
     log("input bytes {}",input);
+    // Compute the SHA-512 hash of the input
     u8[64] mut hash512 = sha512(input);
     log("512hash {}",hash512);
+    // Initialize an array to store the hash as u32 integers
     u32[16] mut hash_u32 = [0;16];
+    // Convert the hash from u8 to u32 format
     for u32 i in 0..16{
         u8[4] current_chunks = hash512[i*4..(i+1)*4];
         bool[32] chunk_bits = getbits(current_chunks);
@@ -30,22 +43,28 @@ def asserthash(u32[8] M0,u32[8] M1,u8[721] input) -> bool {
     }
     log("512hash u32 chanks {} ",hash_u32);
     
-
+// Return true if the first 8 u32 values match M0 and the next 8 match M1
 return (M0 == hash_u32[0..8]) && (M1 == hash_u32[8..16]);
 }
 
 
-
-//def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1, private field[144] temperature, private field[144] humidity, private field[144] speed, private field[144] acceleration, private bool[144] hasmoved, private field deviceid, private field walletaddress) -> (u32, field, field) {
+/*
+Main function that processes the input data and returns a score, device ID, and wallet address
+*/
 def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1, private u8[144] temperature, private u8[144] humidity, private u8[144] speed, private u8[144] acceleration, private u8[144] hasmoved, private u8 deviceid, private field walletaddress) -> (u32, field, field) {
+    // Concatenate all input data into a single array
     u8[721] input = [...temperature,...humidity,...speed,...acceleration,...hasmoved,deviceid];
+    // Verify that the hash of the input matches M0 and M1
     bool isassert = asserthash(M0,M1,input);
     log("assert? : {}",isassert);
+    // Assert that the hash verification succeeded
     assert(isassert);
+    // Load the BabyJubJub parameters for signature verification
     BabyJubJubParams context = context();
+    // Verify the EdDSA signature
 	assert(verifyEddsa(R, S, A, M0, M1, context));
     log("signature {} is verified",S);
-    
+    // Initialize the score and other variables for computation
     u32 mut score = 0;
     
     field mut sum_temperature = 0;
@@ -55,30 +74,32 @@ def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1, private u8[144] 
     
     bool mut speed_compliant = true;
     bool mut acceleration_compliant = true;
-    
+    // Loop over the 144 samples to compute various metrics
     for u32 i in 0..144 {
+        // Sum the temperature and humidity values
        sum_temperature = sum_temperature + u8_to_field(temperature[i]);
        sum_humidity = sum_humidity + u8_to_field(humidity[i]);
+       // Sum the speed for moving intervals only
        sum_speed_moving = if (hasmoved[i] == 1) {sum_speed_moving + u8_to_field(speed[i])} else {sum_speed_moving};
-       
+       // Check if speed is compliant with the limit (<= 130)
        speed_compliant = if speed[i] <= 130 {speed_compliant} else {false};
-       //Shift on Raspberry +100 to avoid negative values
+       // Check if acceleration is within the compliant range [98, 102]
        acceleration_compliant =  if acceleration[i] <=102 && acceleration[i] >= 98 {acceleration_compliant} else {false} ;
-       
+       // Count the number of pauses (when hasmoved is false)
        sum_pause = if (hasmoved[i] == 1) {sum_pause} else {sum_pause +1}; 
     }
-    
+    // Compute the average temperature, humidity, speed, and pause time
     field avg_temperature = sum_temperature/144;
     field avg_humidity = sum_humidity/144;
     field avg_speed_moving = sum_speed_moving/(144-sum_pause);
     field avg_pause = sum_pause/144;
-    
+    // Compute the variance of the speed while moving
     field mut sum_of_squares = 0;
     for u32 i in 0..144 {
        sum_of_squares = if (hasmoved[i] == 1) {sum_of_squares + (u8_to_field(speed[i])-avg_speed_moving)**2} else {sum_of_squares};
     }
     field var_speed_moving = sum_of_squares/(144-sum_pause-1);
-
+    // Calculate the final score based on various conditions
     score = if avg_temperature > 5 && avg_temperature < 30 {score +1} else {score} ;
     score = if avg_humidity > 40 && avg_humidity < 70 {score +1} else {score};
     score = if var_speed_moving < 15 {score +1} else {score};
@@ -87,6 +108,6 @@ def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1, private u8[144] 
     score = if acceleration_compliant  {score +1} else {score};
     
     log("score is {}", score);
-    
+    // Return the final score, device ID, and wallet address
     return (score, u8_to_field(deviceid), walletaddress);
 }
