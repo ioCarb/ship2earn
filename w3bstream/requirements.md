@@ -25,4 +25,10 @@ git clone --depth 5 https://github.com/ioCarb/iotex-core.git
 make ioctl
 ```
 
+- set the endpoint to be the local w3btream docker container
+
+```bash
+ioctl config set wsEndpoint 'localhost:9000'
+```
+
 - the binary will be `iotex-core/bin/ioctl`, you can execute it from there or copy it to some location in your `$PATH`

@@ -12,11 +12,14 @@ git clone https://github.com/ioCarb/zokrates-sprout.git
 
 ## set smart contract
 
-	set the verifier smart-contract address as the `CONTRACT_WHITELIST` env var in the docker-compose.yaml. W3bstream will send the proof there.
+set the verifier smart-contract address as the `CONTRACT_WHITELIST` env var in the docker-compose.yaml. W3bstream will send the proof there.
 
 ```yaml
 CONTRACT_WHITELIST=0xYOUR_ADDRESS
 ```
+
+[!NOTE]
+the `CONTRACT_WHITELIST` is originally meant for a `router` contract, however the iotex documentation neither says how to create one nor explains what it is. In our deployment scenarios, w3bstream nodes are only meant for single smart-contracts, thus fixing the smart-contract address is no issue.
 
 ## start w3bstream
 
