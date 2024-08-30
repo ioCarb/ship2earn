@@ -1,7 +1,6 @@
 # Summary
 - [Introduction](README.md)
 - [Raspberry Pi](./experimentation/rpi/README.md)
-  - [Tests](./rpi/tests.md)
 - [w3bstream](w3bstream/overview.md)
   - [configuring the sequencer]()
   - [running w3bstream](w3bstream/requirements.md)
