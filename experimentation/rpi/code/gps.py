@@ -1,3 +1,6 @@
+# GPS Python Code from 
+# https://github.com/finamon-de/gps-4g-hat-library/tree/main/examples
+
 from datetime import datetime
 import json
 import time

@@ -1,10 +1,12 @@
+# calculateDistance haversine formula in python
+# https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+
 from datetime import datetime
 import json
 import time
-#import pynmea2
 import os
 import event_pb2
-import hashlib
+
 import paho.mqtt.client as mqtt
 import sys
 
@@ -27,11 +29,29 @@ import math
 import psutil
 import tempfile
 
+
+#lock = threading.Lock()
 stop_event = threading.Event()
 
 def byte_repr(i):
     result = i.to_bytes((i.bit_length() + 7) // 8, "big")
     return result
+
+
+#def convert_lat(lat):
+#    lat_unsigned = int(
+#        (lat + 90) * 10**7
+#    )  # Shifting the range from -90...90 to 0...180 and move the decimal places
+#    return lat_unsigned
+
+
+#def convert_lon(lon):
+#    lon_unsigned = int(
+#        (lon + 180) * 10**7
+#    )  # Shifting the range from -180...180 to 0...360 and move the decimal places
+#
+#    return lon_unsigned
+
 
 def randome_vehicle():
     vehicle_list = [1000000001, 1000000002, 1000000003, 1000000004]
@@ -65,7 +85,7 @@ def convert__to_protobuf(dict):
 def send(payload, loop_count):
     try:
         broker = "devnet-staging-mqtt.w3bstream.com"
-        #topic = "eth_0x8ef5b88a455fc8a0077c708d14d8355bfa725efd_iocarb_test3"
+        #topic = "eth_0x8ef5b88a455fc8a0077c708d14d8355bfa725efd_iocarb_test2"
         topic = "eth_0x8ef5b88a455fc8a0077c708d14d8355bfa725efd_iocarb"
         message = bytes.fromhex(payload)
 
@@ -101,12 +121,30 @@ def send(payload, loop_count):
         print(f"Error: {str(e)}\n")
 
 
-raw_msg = ""
+def start(distance):
 
-def start(positions):
-    vehicle = 1
-    prehash = positions + " " + str(vehicle)
-    msg = hashlib.sha512(prehash.encode("utf-8")).digest()
+    placeholder = byte_repr(1000000001)
+    bdistance = byte_repr(distance)
+    vehicle = byte_repr(1000000001)
+
+    msg = to_bytes(
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        placeholder,
+        vehicle,
+        bdistance,
+    )
 
     key = FQ(
         1997011358982923168928344992199991480689546837621580239342656433234255379025
@@ -116,23 +154,22 @@ def start(positions):
 
     pk = PublicKey.from_private(sk)
 
-    is_verified = pk.verify(sig, msg)
+    vehicle = 1000000001
 
     signed_msg = return_signature_for_zokrates_cli(pk, sig, msg)
-    signed_msg_with_prehash = signed_msg + " " + prehash
 
     protobuf_msg = convert__to_protobuf(
         {
             "header": {
                 "event_type": "DEVICE_DATA",
-                #"token": "w3b_MV8xNzIwMTcyMzk2X3tsPXw_MVlVPyhZbQ",
+                #"token": "w3b_MV8xNzIwMTcyMjUxXyhbeGA5TG9WK3wxdw",
                 "token": "w3b_MV8xNzE3NDM0MTQwX1c-KiAhNnk2NSJiWg",
                 "timestamp": int(time.time()),
             },
             "payload": {
                 "timestamp": str(int(time.time())),
                 "pebbleId": "98765",
-                "message": signed_msg_with_prehash,
+                "message": signed_msg,
             },
         }
     )
@@ -155,13 +192,14 @@ def calculateDistance(tupel1, tupel2):
     distance_in_m = distance_in_km * 1000
     return int(distance_in_m)
 
+
 def read_from_json():
     with open('gps.json', 'r') as file:
         data = json.load(file)
         print(f"Latitude: {data['latitude']}, Longitude: {data['longitude']}")
         return data['latitude'], data['longitude']
 
-logfile = "resource_usage_test_3.log"
+logfile = "resource_usage_test_2.log"
 
 def write_log():
     try:
@@ -179,31 +217,28 @@ def write_log():
         print(f"Error in write_log: {e}")
 
 
+
 def update_current_location():
-    global raw_msg
     try:
-        (lat1,lon1) = read_from_json()
         while not stop_event.is_set():
             time.sleep(10)
-            #print("queuing new position.")
-            (lat2,lon2) = read_from_json()
-            if raw_msg == "":
-                raw_msg += str(calculateDistance((lat1,lon1),(lat2,lon2)))
-            else:
-                raw_msg += " " + str(calculateDistance((lat1,lon1),(lat2,lon2)))
-            (lat1,lon1) = (lat2,lon2)
+            print("queuing new position.")
+            (lat,lon) = read_from_json()
+            currentLocationQueue.append((lat,lon))
     except Exception as e:
         print(f"Error in stopp_app: {e}")
-
 
 
 
 def stopp_app():
     try:
         while not stop_event.is_set():
-            time.sleep(600) #10 min 600
+            time.sleep(60) #10 min 600
+            if len(currentLocationQueue) != 0:
+                start(calculateDistance(currentLocationQueue[0],currentLocationQueue[-1]))
+            else:
+                start(0)
             print("Time is up")
-            start(raw_msg)
             stop_event.set()
             sys.exit(0)
     except Exception as e:
