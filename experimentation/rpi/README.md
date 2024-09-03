@@ -76,7 +76,7 @@ wvdial -C /home/user/wvdial.conf umtseplus
 ```
 
 
-## Get the MQTT Settings from W3bstream
+## Get the MQTT Settings from W3bstream (for illustrative reasons)
 
 Open https://devnet-staging.w3bstream.com/. Here you login with your IoTex wallet and create a new project and add our wasm and json file.
 
