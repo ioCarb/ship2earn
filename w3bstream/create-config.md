@@ -1,5 +1,7 @@
 # creating a config
 
+Configs contain all information retaining to a project, like the blockchain endpoint, the compiled zk-circuit etc.
+
 ## create a config file using ioctl:
 
 The default values for `-p` and `-k` are the same as selected below so feel free to not set these options. The `-e` field is used for the proving scheme. Just use `ioctl ws procject config --help` for help
