@@ -2,7 +2,7 @@
 - [Introduction](README.md)
 - [Raspberry Pi](./experimentation/rpi/README.md)
 - [w3bstream](w3bstream/overview.md)
-  - [configuring the sequencer]()
+  <!--- - [configuring the sequencer]() --->
   - [running w3bstream](w3bstream/requirements.md)
 	- [compile circuit](w3bstream/compile-circuit.md)
 	- [creating a config](w3bstream/create-config.md)
