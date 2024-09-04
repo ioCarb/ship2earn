@@ -1,0 +1,103 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+
+
+def main(field[10] R, field[5] S, field[10] A, u32[40] M0, u32[40] M1, private field[720] temperature, private field[720] humidity, private field[720] speed, private field[720] acceleration, private bool[720] hasmoved, private field[5] deviceid) -> (field, field[5]) {
+    
+    BabyJubJubParams context = context();
+	
+    u32 mut r_position = 0;
+    u32 mut a_position = 0;
+    u32 mut m0_position = 0;
+    u32 mut m1_position = 0;
+
+    for u32 p in 0..5 {
+
+        field[2] mut rpair = [R[r_position], R[r_position+1]];
+        r_position = r_position + 2;
+
+        field mut ssingle = S[p];
+
+        field[2] mut apair = [A[a_position], A[a_position+1]];
+        a_position = a_position + 2;
+
+        u32[8] mut m0chunk = [M0[m0_position], M0[m0_position+1], M0[m0_position+2], M0[m0_position+3], M0[m0_position+4], M0[m0_position+5], M0[m0_position+6], M0[m0_position+7]];
+        m0_position = m0_position + 8;
+
+        u32[8] mut m1chunk = [M1[m1_position], M1[m1_position+1], M1[m1_position+2], M1[m1_position+3], M1[m1_position+4], M1[m1_position+5], M1[m1_position+6], M1[m1_position+7]];
+        m1_position = m1_position + 8;
+
+        assert(verifyEddsa(rpair, ssingle, apair, m0chunk, m1chunk, context));
+        log("signature {} of number {} is verified", ssingle, p);
+    }
+    
+    field[5] mut trip_scores = [0; 5];
+    u32 mut loop_lower_end = 0;
+    u32 mut loop_higher_end = 144;
+
+    for u32 j in 0..5 {
+
+        field mut score = 0;
+    
+        field mut sum_temperature = 0;
+        field mut sum_humidity = 0;
+        field mut sum_pause = 0; //1 pause equals 10mins
+        field mut sum_speed_moving = 0;
+    
+        bool mut speed_compliant = true;
+        bool mut acceleration_compliant = true;
+    
+        for u32 i in loop_lower_end..loop_higher_end {
+       
+            sum_temperature = sum_temperature + temperature[i];
+            sum_humidity = sum_humidity + humidity[i];
+            sum_speed_moving = if hasmoved[i] {sum_speed_moving + speed[i]} else {sum_speed_moving};
+       
+            speed_compliant = if speed[i] <= 130 {speed_compliant} else {false};
+            //Shift on Raspberry +100 to avoid negative values
+            acceleration_compliant =  if acceleration[i] <=102 && acceleration[i] >= 98 {acceleration_compliant} else {false} ;
+       
+            sum_pause = if hasmoved[i] {sum_pause} else {sum_pause +1}; 
+        }
+    
+        field avg_temperature = sum_temperature/144;
+        field avg_humidity = sum_humidity/144;
+        field avg_speed_moving = sum_speed_moving/(144-sum_pause);
+        field avg_pause = sum_pause/144;
+        field mut sum_of_squares = 0;
+    
+        for u32 i in loop_lower_end..loop_higher_end {
+            sum_of_squares = if hasmoved[i] {sum_of_squares + (speed[i]-avg_speed_moving)**2} else {sum_of_squares};
+        }
+        field var_speed_moving = sum_of_squares/(144-sum_pause-1);
+
+        score = if avg_temperature > 5 && avg_temperature < 30 {score +1} else {score} ;
+        score = if avg_humidity > 40 && avg_humidity < 70 {score +1} else {score};
+        score = if var_speed_moving < 15 {score +1} else {score};
+        score = if avg_pause > (1/6) {score +1} else {score};
+        score = if speed_compliant  {score +1} else {score};
+        score = if acceleration_compliant  {score +1} else {score};
+    
+        log("score from trip: {} is  {}", j, score);
+
+        trip_scores[j] = score;
+        
+        loop_lower_end = loop_lower_end + 144;
+        loop_higher_end = loop_higher_end + 144;
+        
+    }
+
+    field mut total_score = 0;
+
+    for u32 k in 0..5 {
+        total_score = total_score + trip_scores[k];
+    }
+
+    field mut avg_score = 0;
+    avg_score = (total_score * 100) / 500;
+
+    log("average score is  {}", avg_score);
+
+    return (avg_score, deviceid);
+}
