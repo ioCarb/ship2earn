@@ -1,0 +1,56 @@
+from "ecc/babyjubjubParams" import BabyJubJubParams;
+import "signatures/verifyEddsa.zok" as verifyEddsa;
+import "ecc/babyjubjubParams.zok" as context;
+
+
+def main(field[2] R, field S, field[2] A, u32[8] M0, u32[8] M1, private field[144] temperature, private field[144] humidity, private field[144] speed, private field[144] acceleration, private bool[144] hasmoved, private field deviceid) -> (u32, field) {
+    
+   BabyJubJubParams context = context();
+	assert(verifyEddsa(R, S, A, M0, M1, context));
+   
+   log("signature {} is verified",S);
+    
+   u32 mut score = 0;
+    
+   field mut sum_temperature = 0;
+   field mut sum_humidity = 0;
+   field mut sum_pause = 0; //1 pause equals 10mins
+   field mut sum_speed_moving = 0;
+    
+   bool mut speed_compliant = true;
+   bool mut acceleration_compliant = true;
+    
+   for u32 i in 0..144 {
+       
+      sum_temperature = sum_temperature + temperature[i];
+      sum_humidity = sum_humidity + humidity[i];
+      sum_speed_moving = if hasmoved[i] {sum_speed_moving + speed[i]} else {sum_speed_moving};
+      
+      speed_compliant = if speed[i] <= 130 {speed_compliant} else {false};
+      //Shift on Raspberry +100 to avoid negative values
+      acceleration_compliant =  if acceleration[i] <=102 && acceleration[i] >= 98 {acceleration_compliant} else {false} ;
+      
+      sum_pause = if hasmoved[i] {sum_pause} else {sum_pause +1}; 
+   }
+    
+   field avg_temperature = sum_temperature/144;
+   field avg_humidity = sum_humidity/144;
+   field avg_speed_moving = sum_speed_moving/(144-sum_pause);
+   field avg_pause = sum_pause/144;
+    
+   field mut sum_of_squares = 0;
+   for u32 i in 0..144 {
+      sum_of_squares = if hasmoved[i] {sum_of_squares + (speed[i]-avg_speed_moving)**2} else {sum_of_squares};
+   }
+   field var_speed_moving = sum_of_squares/(144-sum_pause-1);
+
+   score = if avg_temperature > 5 && avg_temperature < 30 {score +1} else {score} ;
+   score = if avg_humidity > 40 && avg_humidity < 70 {score +1} else {score};
+   score = if var_speed_moving < 15 {score +1} else {score};
+   score = if avg_pause > (1/6) {score +1} else {score};
+   score = if speed_compliant  {score +1} else {score};
+   score = if acceleration_compliant  {score +1} else {score};
+    
+   log("score is {}", score);
+    
+   return (score, deviceid);}
