@@ -21,19 +21,25 @@ To compile and run the ZoKrates program, follow these steps:
 2. **Navigate to the ZoKrates directory:** Open your terminal and navigate to the ZoKrates directory where the code file is located.
 
 3. **Compile the program:** 
+
 ```
 zokrates compile -i animal_transport.zok
 ```
+
 This will generate the `out` file containing the compiled ZoKrates program.
 
-4. **Setup ceremony:** Depending on your [proving-scheme](https://zokrates.github.io/toolbox/proving_schemes.html) perferences, a circuit-agnostic setup might be required (see Marlin). As Marlin expects a fixed universal-setup size n prior to the setup execution, this has to be specified in the CLI. Our programs typically require size 21 (animal_transport.zok) to size 24 (animal_transport_hash.zok): Note that G16 and GM17 do not require the universal setup part. 
+4. **Setup ceremony:**
+
+Depending on your [proving-scheme](https://zokrates.github.io/toolbox/proving_schemes.html) perferences, a circuit-agnostic setup might be required (see Marlin). As Marlin expects a fixed universal-setup size n prior to the setup execution, this has to be specified in the CLI. Our programs typically require size 21 (animal_transport.zok) to size 24 (animal_transport_hash.zok): Note that G16 and GM17 do not require the universal setup part. 
 
 ```
 zokrates universal-setup --size n --proving-scheme marlin
 zokrates setup --proving-scheme marlin
 ```
 
-4. **Witness computation:** In order to compute a witness (execute the program), the function arguments have to be passed in the CLI. Replace `[arguments...]` with the actual parameters expected by the `main` function.
+5. **Witness computation:**
+
+In order to compute a witness (execute the program), the function arguments have to be passed in the CLI. Replace `[arguments...]` with the actual parameters expected by the `main` function.
   
 ```
 zokrates compute-witness -a [arguments...]
@@ -46,12 +52,16 @@ INPUT_VALUES=$(cat input.txt | tr '\n' ' ')
 zokrates compute-witness -a $INPUT_VALUES
 ```
 
-5. **Generate proof:** This command will generate a ZoKrates proof of verifiable correct computation.
+6. **Generate proof:**
+
+This command will generate a ZoKrates proof of verifiable correct computation.
 ```
 zokrates generate-proof --proving-scheme marlin
 ```
 
-6. **Verify proof:** To verify the correctness, ZoKrates automatically generates a Solidity contract which can be deployed to an Ethereum Blockchain and passed the proof.json. A "true" as response indicates the successful verification. 
+7. **Verify proof:**
+
+To verify the correctness, ZoKrates automatically generates a Solidity contract which can be deployed to an Ethereum Blockchain and passed the proof.json. A "true" as response indicates the successful verification. 
 
 ```
 zokrates export-verifier
