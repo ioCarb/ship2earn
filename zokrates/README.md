@@ -10,8 +10,7 @@ This is a collection of ZoKrates programs, an open-source zkSNARKs toolbox, that
 
 
 ## Requirement
-**ZoKrates:** The code is written in ZoKrates. Make sure you have ZoKrates installed.
-Installation: Follow the [ZoKrates installation guide](https://zokrates.github.io/gettingstarted.html).
+**ZoKrates:** Make sure you have ZoKrates installed. If not, follow the [ZoKrates installation guide](https://zokrates.github.io/gettingstarted.html).
 
 ## Usage
 To compile and run the ZoKrates program, follow these steps:
