@@ -73,6 +73,6 @@ Alternatively, true is also returned in the CLI when using:
 zokrates verify
 ```
 
-## Functionhality
+## Functionality
 
 To gain more insights about the functionality of individual code-components e.g. signature verification etc. we refer to our project report
