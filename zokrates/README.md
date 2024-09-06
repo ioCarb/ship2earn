@@ -1,5 +1,5 @@
 ## Introduction
-This is a collection of ZoKrates smart contracts, likely intended for use in zero-knowledge proofs (ZKP) on blockchain applications. The scripts involve various cryptographic and data-processing operations, primarily focusing on verifying digital signatures, performing hash computations, and processing environmental sensor data.
+This is a collection of ZoKrates programs, an open-source zkSNARKs toolbox, that can be used to construct zero-knowledge-proofs (ZKP) for decentralized physical infrastructure use-cases which can be easily verfied on-chain. As examples, we wrote programs for an animal transport use-case (where farmers prove their compliance to EU guidelines) and a driven-distance use-case, which can be used for VCM-use cases or similar, without actually reveiling the input data on-chain.
 
 1. `animal_transport_hash.zok`: This file is responsible for generating a cryptographic hash for the animal transport data. The hash function ensures the integrity and authenticity of the data, allowing verification that the data has not been tampered with during transport.
 2. `animal_transport.zok` : Implements the core logic for handling and verifying the transport of animals, including ensuring that the transport adheres to predefined rules and conditions. This could involve checking distances, times, or other transport conditions.
@@ -7,9 +7,12 @@ This is a collection of ZoKrates smart contracts, likely intended for use in zer
 4. `sum_distance_company.zok` : Calculates the total distance covered by all transports for a specific company. This sum is often necessary for auditing purposes, tracking logistics, or verifying that all transports are accounted for.
 5. `sum_distance.zok` : Similar to `sum_distance_company.zok`, this file focuses on summing the distances covered by individual transports, possibly across different entities or journeys.
 6. `sum_gps.zok` : Summarizes or aggregates GPS data, likely calculating total distances or validating GPS-based tracking data. It ensures that the GPS data aligns with expected transport routes or totals.
+
+
 ## Requirement
-**ZoKrates:** The code is written for the ZoKrates framework, a toolbox for zkSNARKs on Ethereum. Make sure you have ZoKrates installed.
+**ZoKrates:** The code is written in ZoKrates. Make sure you have ZoKrates installed.
 Installation: Follow the [ZoKrates installation guide](https://zokrates.github.io/gettingstarted.html).
+
 ## Usage
 To compile and run the ZoKrates program, follow these steps:
 
@@ -22,64 +25,44 @@ To compile and run the ZoKrates program, follow these steps:
 zokrates compile -i animal_transport.zok
 ```
 This will generate the `out` file containing the compiled ZoKrates program.
-4. **Setup and witness computation:**
+
+4. **Setup ceremony:** Depending on your [proving-scheme](https://zokrates.github.io/toolbox/proving_schemes.html) perferences, a circuit-agnostic setup might be required (see Marlin). As Marlin expects a fixed universal-setup size n prior to the setup execution, this has to be specified in the CLI. Our programs typically require size 21 (animal_transport.zok) to size 24 (animal_transport_hash.zok): Note that G16 and GM17 do not require the universal setup part. 
+
 ```
-zokrates setup
+zokrates universal-setup --size n --proving-scheme marlin
+zokrates setup --proving-scheme marlin
+```
+
+4. **Witness computation:** In order to compute a witness (execute the program), the function arguments have to be passed in the CLI. Replace `[arguments...]` with the actual parameters expected by the `main` function.
+  
+```
 zokrates compute-witness -a [arguments...]
 ```
 
-Replace `[arguments...]` with the actual parameters expected by the `main` function. The parameters are:
+We advice to save your input values in a separate .txt file to avoid syntax errors in the CLI. In our case, we wrote all values in a separate line and read them in the CLI via:
 
-- `R`: Public key part 1.
-- `S`: Signature.
-- `A`: Public key part 2.
-- `M0`: First part of the message hash.
-- `M1`: Second part of the message hash.
-- Other arrays: Sensor data (temperature, humidity, etc.) or cryptographic data.
-5. **Generate proof:**
 ```
-zokrates generate-proof
+INPUT_VALUES=$(cat input.txt | tr '\n' ' ')
+zokrates compute-witness -a $INPUT_VALUES
 ```
-This command will generate a zkSNARK proof that can be verified on-chain or in another context.
-6. **Verify proof:**
+
+5. **Generate proof:** This command will generate a ZoKrates proof of verifiable correct computation.
+```
+zokrates generate-proof --proving-scheme marlin
+```
+
+6. **Verify proof:** To verify the correctness, ZoKrates automatically generates a Solidity contract which can be deployed to an Ethereum Blockchain and passed the proof.json. A "true" as response indicates the successful verification. 
+
+```
+zokrates export-verifier
+```
+
+Alternatively, true is also returned in the CLI when using:
+
 ```
 zokrates verify
 ```
-## Key Components of the Code:
-### 1. Import Statements:
-- These import various modules needed for cryptographic operations (like elliptic curves, hashing, and signature verification) and utility functions (like casting and bitwise operations).\
-    * `ecc/babyjubjubParams.zok`: Provides foundational elliptic curve parameters used for signature verification and other cryptographic operations.
-    * `signatures/verifyEddsa.zok` : This file is crucial for verifying digital signatures, ensuring that data (like sensor readings) has not been tampered with and is authenticated by the correct party.
-    * `hashes/sha3/512bit.zok` : Used to generate a cryptographic hash of the message data, which is then signed and verified.
-    * `utils/casts/u8_to_bits.zok` : Often used in cryptographic functions where data needs to be manipulated at the bit level, such as when processing input data before hashing.
-    * `utils/casts/u32_from_bits.zok`: Useful in scenarios where bitwise operations are required to aggregate or reconstruct data into a numerical format.
-    * `utils/casts/u8_to_field.zok` : Helps in converting standard data types into a form suitable for cryptographic computations within ZoKrates circuits.
 
-The full ZoKrates Standard Library can be found [here](https://github.com/Zokrates/ZoKrates/tree/latest/zokrates_stdlib/stdlib).
+## Functionhality
 
-### 2. Main Functionalities:
-
-- **Signature Verification:** The main functions in most scripts start by verifying an EdDSA (Edwards-curve Digital Signature Algorithm) signature using the verifyEddsa function and BabyJubJub elliptic curve parameters.
-
-- **Hashing:** SHA-512 or SHA-256 hashing algorithms are used to ensure data integrity and verify that inputs match a given hash. This is done using sha512 or sha256 functions.
-
-- **Data Processing:** Several functions process arrays of data (such as temperature, humidity, speed, and acceleration) from sensors. This data is then used to calculate scores or sums that might be used to evaluate compliance or determine some other metrics.
-
-- **Bitwise Operations:** Functions like getbits are used to convert byte arrays to bit arrays, which are essential in various cryptographic operations, especially when transforming data between different formats.
-
-### 3. Example Code Highlights:
-- **Data Integrity Check (asserthash):** This function verifies that the SHA-512 hash of a given input matches two given hash components, M0 and M1. If they match, the function returns true.
-
-- **Environmental Data Processing (animal_transport_hash.zok & animal_transport.zok):** These scripts read data like temperature, humidity, speed, and acceleration from sensors, verify the integrity using a hash, and then calculate scores based on certain thresholds.
-
-- **Distance Calculation (sum_distance_company.zok):** This script sums distances based on their types and applies a weighted sum to calculate a total value, which is then logged and returned.
-
-## Purpose of the Scripts:
-These scripts seem to be designed for a use case where environmental data (like temperature, speed, and acceleration) is recorded, hashed, and verified using ZKP to ensure the data has not been tampered with. This could be useful in applications like animal transport monitoring, where certain environmental conditions must be maintained and verified.
-
-## Possible Applications:
-Supply Chain Tracking: These contracts could be used to ensure that goods (especially sensitive items like food or animals) are transported under the correct conditions. The integrity of the recorded data is verified using ZKPs before making any decisions or completing transactions.
-
-Compliance Monitoring: The calculated scores and distances could be used to monitor compliance with specific regulatory requirements, ensuring that entities follow prescribed environmental conditions.
-
-Overall, this code demonstrates how ZoKrates can be used to implement zero-knowledge proofs for verifying digital signatures, processing sensor data, and ensuring data integrity on a blockchain.
+To gain more insights about the functionality of individual code-components e.g. signature verification etc. we refer to our project report
